@@ -19,13 +19,13 @@ limitations under the License.
 package retry
 
 import (
-  "time"
+  gpsched "github.com/alexnjh/epsilon/general_purpose_scheduler"
 )
 
 /*
 Message structure for communicating with the Retry microservice
 */
 type RetryRequest struct {
-  Req  ScheduleRequest
+  Req  gpsched.ScheduleRequest
   Queue string //Name of the queue the Retry microservice is using
 }
