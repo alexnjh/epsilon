@@ -35,6 +35,7 @@ import (
   corelisters "k8s.io/client-go/listers/core/v1"
   metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
   communication "github.com/alexnjh/epsilon/communication"
+  retry "github.com/alexnjh/epsilon/retry"
 )
 
 // Does scheduling operations and should be executed in a goroutine
@@ -103,7 +104,7 @@ func ScheduleProcess(
           req.LastBackOffTime = req.LastBackOffTime*req.LastBackOffTime
           req.Message = err.Error()
 
-          respBytes, err := json.Marshal(RetryRequest{req,receiveQueue})
+          respBytes, err := json.Marshal(retry.RetryRequest{req,receiveQueue})
           if err != nil {
             log.Fatalf("%s", err)
           }
