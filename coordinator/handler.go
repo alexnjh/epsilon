@@ -33,6 +33,7 @@ import (
   utilruntime "k8s.io/apimachinery/pkg/util/runtime"
   corelisters "k8s.io/client-go/listers/core/v1"
   corev1 "k8s.io/api/core/v1"
+  communication "github.com/alexnjh/epsilon/communication"
 )
 
 // Handler interface contains the methods that are required
@@ -89,44 +90,7 @@ func (t *PodHandler) ObjectSync(key string) error {
   }else{
     queueName = t.defaultQueue
   }
-  //
-  // qs, err := t.rmqc.GetQueue("/",queueName)
 
-  // // If information not obtainable the waiting time will not be calculated and set to unknown
-  // // Coordinator will still attempt to send the pod for scheduling
-  // if err != nil{
-  //   log.Errorf("Cannot get queue:  %s",err.Error())
-  //
-  //   // Update pod estimated waiting time
-  //   if obj.Annotations != nil {
-  //     obj.Annotations["epsilon.scheduling.waiting_time"] = "Unknown"
-  //   }else{
-  //     obj.Annotations=map[string]string{
-  //       "epsilon.scheduling.waiting_time": "Unknown",
-  //     }
-  //   }
-  // }else{
-  //
-  //   estimate := calWaitingTime(qs.Consumers,qs.Messages)
-  //
-  //   // Update pod estimated waiting time
-  //   if obj.Annotations != nil {
-  //     obj.Annotations["epsilon.scheduling.waiting_time"] = (time.Duration(estimate)*time.Millisecond).String()
-  //   }else{
-  //     obj.Annotations=map[string]string{
-  //       "epsilon.scheduling.waiting_time": (time.Duration(estimate)*time.Millisecond).String(),
-  //     }
-  //   }
-  // }
-
-  // // Update pod information and if there is an error the scheduling request will continue
-  // // but waiting time will not be written to the api server
-  // _ , err = t.clientset.CoreV1().Pods(obj.Namespace).Update(context.TODO(), obj, metav1.UpdateOptions{});
-
-  //
-  // if err != nil {
-  //   log.Errorf(err.Error())
-  // }
 
   // Keep trying if unable to send schedule request to the queued.
   // This happens when connection to the rabbitmq server might be down.
@@ -211,15 +175,4 @@ func (t *PodHandler) ObjectDeleted(key string) {
 
 	log.Info("[TestHandler] Object Deleted")
 
-}
-
-// Calculates the waiting time for the pod to be scheduled
-func calWaitingTime(noOfConsumers, noOfMessages int) int{
-
-  if noOfMessages == 0 {
-    return AverageSchedulingTime
-  }
-
-  // Not completed testing only
-  return int((float64(noOfMessages)/float64(noOfConsumers))*AverageSchedulingTime)
 }

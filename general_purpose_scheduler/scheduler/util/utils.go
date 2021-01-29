@@ -23,7 +23,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog"
 	extenderv1 "k8s.io/kube-scheduler/extender/v1"
-	podutil "scheduler_unit/k8s.io/kubernetes/pkg/api/v1/pod"
+	podutil "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/api/v1/pod"
 )
 
 // GetPodFullName returns a name that uniquely identifies a pod.

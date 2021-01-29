@@ -21,7 +21,7 @@ import(
   corev1 "k8s.io/api/core/v1"
   "k8s.io/client-go/informers"
 	"k8s.io/client-go/tools/cache"
-  "scheduler_unit/scheduler"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/scheduler"
 )
 
 // addAllEventHandlers is a helper function used in tests and in Scheduler

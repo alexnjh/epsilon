@@ -31,14 +31,15 @@ import (
 
   corev1 "k8s.io/api/core/v1"
   log "github.com/sirupsen/logrus"
-  sched "scheduler_unit/scheduler"
+  sched "github.com/alexnjh/epsilon/general_purpose_scheduler/scheduler"
   corelisters "k8s.io/client-go/listers/core/v1"
   metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+  communication "github.com/alexnjh/epsilon/communication"
 )
 
 // Does scheduling operations and should be executed in a goroutine
 func ScheduleProcess(
-  comm Communication,
+  comm communication.Communication,
   s *sched.Scheduler,
   client kubernetes.Interface,
   podLister corelisters.PodLister,

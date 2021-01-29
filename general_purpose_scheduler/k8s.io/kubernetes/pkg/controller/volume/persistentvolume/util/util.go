@@ -29,9 +29,9 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 	storagelisters "k8s.io/client-go/listers/storage/v1"
 	"k8s.io/client-go/tools/reference"
-	v1helper "scheduler_unit/k8s.io/kubernetes/pkg/apis/core/v1/helper"
-	"scheduler_unit/k8s.io/kubernetes/pkg/features"
-	volumeutil "scheduler_unit/k8s.io/kubernetes/pkg/volume/util"
+	v1helper "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/apis/core/v1/helper"
+	"github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/features"
+	volumeutil "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/volume/util"
 )
 
 const (

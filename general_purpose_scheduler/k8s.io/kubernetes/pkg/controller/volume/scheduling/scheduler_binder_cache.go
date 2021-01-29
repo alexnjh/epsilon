@@ -20,7 +20,7 @@ import (
 	"sync"
 
 	v1 "k8s.io/api/core/v1"
-	"scheduler_unit/k8s.io/kubernetes/pkg/controller/volume/scheduling/metrics"
+	"github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/controller/volume/scheduling/metrics"
 )
 
 // PodBindingCache stores PV binding decisions per pod per node.

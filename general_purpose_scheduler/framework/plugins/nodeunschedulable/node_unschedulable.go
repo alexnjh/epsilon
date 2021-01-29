@@ -21,8 +21,8 @@ import (
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	v1helper "scheduler_unit/k8s.io/kubernetes/pkg/apis/core/v1/helper"
-	framework "scheduler_unit/framework/v1alpha1"
+	v1helper "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/apis/core/v1/helper"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 )
 
 // NodeUnschedulable is a plugin that priorities nodes according to the node annotation

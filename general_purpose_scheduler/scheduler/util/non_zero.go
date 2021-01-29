@@ -19,8 +19,8 @@ package util
 import (
 	v1 "k8s.io/api/core/v1"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
-  v1helper "scheduler_unit/k8s.io/kubernetes/pkg/apis/core/v1/helper"
-	"scheduler_unit/k8s.io/kubernetes/pkg/features"
+  v1helper "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/apis/core/v1/helper"
+	"github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/features"
 )
 
 // For each of these resources, a pod that doesn't request the resource explicitly

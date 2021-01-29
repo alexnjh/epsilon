@@ -21,7 +21,7 @@ import (
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/sets"
-	framework "scheduler_unit/framework/v1alpha1"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 )
 
 // Snapshot is a snapshot of cache NodeInfo and NodeTree order. The scheduler takes a

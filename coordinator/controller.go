@@ -29,7 +29,6 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
   listers "k8s.io/client-go/listers/core/v1"
-  communication "github.com/alexnjh/epsilon/communication"
 )
 
 // PodController struct defines how a PodController should encapsulate

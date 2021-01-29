@@ -26,9 +26,9 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/klog"
-	framework "scheduler_unit/framework/v1alpha1"
-	"scheduler_unit/internal/parallelize"
-	schedutil "scheduler_unit/scheduler/util"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
+	"github.com/alexnjh/epsilon/general_purpose_scheduler/internal/parallelize"
+	schedutil "github.com/alexnjh/epsilon/general_purpose_scheduler/scheduler/util"
 )
 
 const (

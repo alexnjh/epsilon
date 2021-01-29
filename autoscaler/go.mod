@@ -1,4 +1,4 @@
-module autoscaler
+module github.com/alexnjh/epsilon/autoscaler
 
 go 1.14
 

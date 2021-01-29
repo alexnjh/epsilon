@@ -1,4 +1,4 @@
-module experiment
+module github.com/alexnjh/epsilon/experiment
 
 go 1.14
 

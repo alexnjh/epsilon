@@ -22,8 +22,8 @@ import (
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation/field"
-  schedulerv1alpha2 "scheduler_unit/scheduler/config"
-	framework "scheduler_unit/framework/v1alpha1"
+  schedulerv1alpha2 "github.com/alexnjh/epsilon/general_purpose_scheduler/scheduler/config"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 	//"k8s.io/utils/pointer"
 )
 

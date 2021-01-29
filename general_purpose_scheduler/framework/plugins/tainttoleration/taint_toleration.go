@@ -22,8 +22,8 @@ import (
 
 	v1 "k8s.io/api/core/v1"
   "k8s.io/apimachinery/pkg/runtime"
-	pluginhelper "scheduler_unit/framework/plugins/helper"
-	framework "scheduler_unit/framework/v1alpha1"
+	pluginhelper "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/helper"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 )
 
 // TaintToleration is a plugin that checks if a pod tolerates a node's taints.

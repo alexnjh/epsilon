@@ -22,14 +22,15 @@ import (
   "os"
   "strconv"
   "math/rand"
-  "scheduler_unit/k8s.io/kubernetes/pkg/controller/volume/scheduling"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/controller/volume/scheduling"
   corev1 "k8s.io/api/core/v1"
   log "github.com/sirupsen/logrus"
-  sched "scheduler_unit/scheduler"
+  sched "github.com/alexnjh/epsilon/general_purpose_scheduler/scheduler"
   kubeinformers "k8s.io/client-go/informers"
   jsoniter "github.com/json-iterator/go"
-  internalcache "scheduler_unit/internal/cache"
+  internalcache "github.com/alexnjh/epsilon/general_purpose_scheduler/internal/cache"
   configparser "github.com/bigkevmcd/go-configparser"
+  communication "github.com/alexnjh/epsilon/communication"
 )
 
 const (
@@ -152,7 +153,7 @@ func main() {
 	)
 
   // Connect to RabbitMQ Server
-  comm, err := NewRabbitMQCommunication(fmt.Sprintf("amqp://%s:%s@%s:%s/",mqUser, mqPass, mqHost, mqPort))
+  comm, err := communication.NewRabbitMQCommunication(fmt.Sprintf("amqp://%s:%s@%s:%s/",mqUser, mqPass, mqHost, mqPort))
   if err != nil {
     log.Fatalf(err.Error())
   }

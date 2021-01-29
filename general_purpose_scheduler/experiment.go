@@ -26,10 +26,11 @@ import (
   "math/rand"
   corev1 "k8s.io/api/core/v1"
   log "github.com/sirupsen/logrus"
+  communication "github.com/alexnjh/epsilon/communication"
 )
 
 // Use for sending experiment data (Not used in normal operations)
-func SendExperimentPayload(comm Communication, obj *corev1.Pod, in time.Time, out time.Time, queueName string, suggestedHost string, hostname string){
+func SendExperimentPayload(comm communication.Communication, obj *corev1.Pod, in time.Time, out time.Time, queueName string, suggestedHost string, hostname string){
 
   // Deep copy as modifications will be made to the pod
   pod := obj.DeepCopy()
@@ -54,7 +55,7 @@ func SendExperimentPayload(comm Communication, obj *corev1.Pod, in time.Time, ou
 }
 
 // Use for sending experiment data (Not used in normal operations)
-func sendExperimentPayload(comm Communication, pod *corev1.Pod, in time.Time, out time.Time, queueName string, hostname string) bool{
+func sendExperimentPayload(comm communication.Communication, pod *corev1.Pod, in time.Time, out time.Time, queueName string, hostname string) bool{
 
   respBytes, err := json.Marshal(ExperimentPayload{Type:"Scheduler",InTime:in,OutTime:out,Pod:pod,Hostname: hostname})
   if err != nil {

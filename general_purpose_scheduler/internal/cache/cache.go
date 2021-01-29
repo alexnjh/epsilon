@@ -27,9 +27,9 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
 	"k8s.io/klog"
-	"scheduler_unit/k8s.io/kubernetes/pkg/features"
-	framework "scheduler_unit/framework/v1alpha1"
-	"scheduler_unit/scheduler/metrics"
+	"github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/features"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
+	"github.com/alexnjh/epsilon/general_purpose_scheduler/scheduler/metrics"
 )
 
 var (

@@ -23,18 +23,18 @@ import (
   "sync"
   "time"
   "math/rand"
-  "scheduler_unit/framework/plugins"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins"
   "k8s.io/client-go/informers"
 
   log "github.com/sirupsen/logrus"
   v1 "k8s.io/api/core/v1"
   corelisters "k8s.io/client-go/listers/core/v1"
-  framework "scheduler_unit/framework/v1alpha1"
-  internalcache "scheduler_unit/internal/cache"
+  framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
+  internalcache "github.com/alexnjh/epsilon/general_purpose_scheduler/internal/cache"
   clientset "k8s.io/client-go/kubernetes"
   pcglib "github.com/MichaelTJones/pcg"
 
-  "scheduler_unit/k8s.io/kubernetes/pkg/controller/volume/scheduling"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/controller/volume/scheduling"
 )
 
 const (

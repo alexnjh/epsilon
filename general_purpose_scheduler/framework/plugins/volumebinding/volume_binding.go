@@ -21,8 +21,8 @@ import (
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"scheduler_unit/k8s.io/kubernetes/pkg/controller/volume/scheduling"
-	framework "scheduler_unit/framework/v1alpha1"
+	"github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/controller/volume/scheduling"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 )
 
 // VolumeBinding is a plugin that binds pod volumes in scheduling.

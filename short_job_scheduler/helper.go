@@ -16,6 +16,7 @@ import (
   corev1 "k8s.io/api/core/v1"
   metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
   configparser "github.com/bigkevmcd/go-configparser"
+  communication "github.com/alexnjh/epsilon/communication"
 )
 
 
@@ -59,7 +60,7 @@ func getKubernetesClient() (kubernetes.Interface){
 	return client
 }
 
-func SendToQueue(comm Communication, message []byte, queue string){
+func SendToQueue(comm communication.Communication, message []byte, queue string){
   for {
     if err := comm.Send(message,queue); err != nil {
 

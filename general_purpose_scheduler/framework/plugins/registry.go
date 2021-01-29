@@ -17,20 +17,20 @@ limitations under the License.
 package plugins
 
 import (
-	"scheduler_unit/framework/plugins/tainttoleration"
-  "scheduler_unit/framework/plugins/nodeaffinity"
-  "scheduler_unit/framework/plugins/noderesources"
-  "scheduler_unit/framework/plugins/nodename"
-  "scheduler_unit/framework/plugins/nodestatus"
-  "scheduler_unit/framework/plugins/nodeports"
-  "scheduler_unit/framework/plugins/nodeunschedulable"
-  "scheduler_unit/framework/plugins/interpodaffinity"
-  "scheduler_unit/framework/plugins/imagelocality"
-  "scheduler_unit/framework/plugins/volumebinding"
-  "scheduler_unit/framework/plugins/volumerestrictions"
-  "scheduler_unit/framework/plugins/resourcepriority"
-  "scheduler_unit/framework/plugins/repeatpriority"
-	framework "scheduler_unit/framework/v1alpha1"
+	"github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/tainttoleration"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/nodeaffinity"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/noderesources"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/nodename"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/nodestatus"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/nodeports"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/nodeunschedulable"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/interpodaffinity"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/imagelocality"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/volumebinding"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/volumerestrictions"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/resourcepriority"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/repeatpriority"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 )
 
 // NewInTreeRegistry builds the registry with all the in-tree plugins.

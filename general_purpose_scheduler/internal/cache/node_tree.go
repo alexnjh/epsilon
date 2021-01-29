@@ -21,7 +21,7 @@ import (
 
 	"k8s.io/api/core/v1"
 	"k8s.io/klog"
-	utilnode "scheduler_unit/k8s.io/kubernetes/pkg/util/node"
+	utilnode "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/util/node"
 )
 
 // nodeTree is a tree-like data structure that holds node names in each zone. Zone names are

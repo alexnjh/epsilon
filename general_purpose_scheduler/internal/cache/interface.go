@@ -19,7 +19,7 @@ package cache
 import (
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
-	framework "scheduler_unit/framework/v1alpha1"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 )
 
 // Cache collects pods' information and provides node-level aggregated information.

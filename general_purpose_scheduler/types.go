@@ -23,16 +23,14 @@ import(
     corev1 "k8s.io/api/core/v1"
 )
 
-type RetryRequest struct {
-  Req  ScheduleRequest
-  Queue string
-}
-
+/*
+Message structure for communicating with the Scheduler microservice
+*/
 type ScheduleRequest struct {
-  Key  string
-  LastBackOffTime int
-  ProcessedTime time.Duration
-  Message string // Left empty unless there is an error
+  Key  string // A string containing pod details in the following format [pod name]@[namespace]
+  LastBackOffTime int // Previous backoff duration
+  ProcessedTime time.Duration // Total time taken to complete scheduling
+  Message string // Supporting information if required [optional]
 }
 
 type CommitRequest struct {
@@ -40,12 +38,4 @@ type CommitRequest struct {
   Description string
   NodeName string
   Pod corev1.Pod
-}
-
-type ExperimentPayload struct {
-  Type string
-  Hostname string
-  InTime time.Time
-  OutTime time.Time
-  Pod *corev1.Pod
 }

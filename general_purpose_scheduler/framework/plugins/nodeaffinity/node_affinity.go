@@ -23,9 +23,9 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
-  v1helper "scheduler_unit/k8s.io/kubernetes/pkg/apis/core/v1/helper"
-  pluginhelper "scheduler_unit/framework/plugins/helper"
-	framework "scheduler_unit/framework/v1alpha1"
+  v1helper "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/apis/core/v1/helper"
+  pluginhelper "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/plugins/helper"
+	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 )
 
 // NodeAffinity is a plugin that checks if a pod node selector matches the node label.

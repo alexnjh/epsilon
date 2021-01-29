@@ -22,7 +22,7 @@ import (
 
 	"k8s.io/component-base/metrics"
 	"k8s.io/component-base/metrics/legacyregistry"
-	volumeschedulingmetrics "scheduler_unit/k8s.io/kubernetes/pkg/controller/volume/scheduling/metrics"
+	volumeschedulingmetrics "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/controller/volume/scheduling/metrics"
 )
 
 const (

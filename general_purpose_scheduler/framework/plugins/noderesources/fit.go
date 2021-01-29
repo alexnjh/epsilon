@@ -28,10 +28,10 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/sets"
 	utilfeature "k8s.io/apiserver/pkg/util/feature"
-	schedulerv1alpha2 "scheduler_unit/scheduler/config"
-  v1helper "scheduler_unit/k8s.io/kubernetes/pkg/apis/core/v1/helper"
-	"scheduler_unit/k8s.io/kubernetes/pkg/features"
-  framework "scheduler_unit/framework/v1alpha1"
+	schedulerv1alpha2 "github.com/alexnjh/epsilon/general_purpose_scheduler/scheduler/config"
+  v1helper "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/apis/core/v1/helper"
+	"github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/features"
+  framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 )
 
 var _ framework.PreFilterPlugin = &Fit{}

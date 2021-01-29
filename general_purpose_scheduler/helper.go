@@ -30,14 +30,15 @@ import (
   "k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/kubernetes"
   "k8s.io/client-go/util/retry"
-  "scheduler_unit/k8s.io/kubernetes/pkg/features"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/features"
 
 	log "github.com/sirupsen/logrus"
   corev1 "k8s.io/api/core/v1"
   metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-  framework "scheduler_unit/framework/v1alpha1"
+  framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
   utilfeature "k8s.io/apiserver/pkg/util/feature"
   configparser "github.com/bigkevmcd/go-configparser"
+  communication "github.com/alexnjh/epsilon/communication"
 )
 
 // Get config file from config path
@@ -82,7 +83,7 @@ func getKubernetesClient() (kubernetes.Interface){
 }
 
 // Use to send a message to a message queue
-func SendToQueue(comm Communication, message []byte, queue string){
+func SendToQueue(comm communication.Communication, message []byte, queue string){
   for {
     if err := comm.Send(message,queue); err != nil {
 

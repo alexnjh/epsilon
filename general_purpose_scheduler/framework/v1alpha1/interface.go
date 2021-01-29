@@ -23,7 +23,7 @@ import(
   "math"
 	v1 "k8s.io/api/core/v1"
   clientset "k8s.io/client-go/kubernetes"
-  "scheduler_unit/k8s.io/kubernetes/pkg/controller/volume/scheduling"
+  "github.com/alexnjh/epsilon/general_purpose_scheduler/k8s.io/kubernetes/pkg/controller/volume/scheduling"
 )
 
 // NodeScoreList declares a list of nodes and their scores.
