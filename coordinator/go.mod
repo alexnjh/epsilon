@@ -7,10 +7,7 @@ require (
 	github.com/Azure/go-autorest/autorest v0.11.1 // indirect
 	github.com/Azure/go-autorest/autorest/adal v0.9.5 // indirect
 	github.com/alexnjh/epsilon v0.0.2 // indirect
-	github.com/alexnjh/epsilon/communication v0.0.0-20210129132005-9871efbddb56
-	github.com/alexnjh/epsilon/experiment v0.0.0-20210129132005-9871efbddb56
-	github.com/alexnjh/epsilon/general_purpose_scheduler v0.0.0-20210129132005-9871efbddb56
-	github.com/alexnjh/epsilon/retry v0.0.0-20210129134008-680cbc940bd7 // indirect
+	github.com/alexnjh/epsilon/communication v0.0.0-20210129135022-258b4f78a52c
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a // indirect
 	github.com/bigkevmcd/go-configparser v0.0.0-20210106142102-909504547ead
 	github.com/blang/semver v3.5.1+incompatible // indirect

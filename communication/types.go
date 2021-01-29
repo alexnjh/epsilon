@@ -37,6 +37,6 @@ type ExperimentPayload struct {
 Message structure for communicating with the Retry microservice
 */
 type RetryRequest struct {
-  Req  gpsched.ScheduleRequest
+  Req  ScheduleRequest
   Queue string //Name of the queue the Retry microservice is using
 }
