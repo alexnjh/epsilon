@@ -220,7 +220,7 @@ func ScheduleProcess(
     timestamp := time.Now()
 
     // Convert json message to schedule request object
-    var req ScheduleRequest
+    var req communication.ScheduleRequest
 
     if err := json.Unmarshal(d.Body, &req); err != nil {
         panic(err)
@@ -266,7 +266,7 @@ func ScheduleProcess(
           req.LastBackOffTime = req.LastBackOffTime*2
           req.Message = err.Error()
 
-          respBytes, err := json.Marshal(RetryRequest{req,receiveQueue})
+          respBytes, err := json.Marshal(communication.RetryRequest{req,receiveQueue})
           if err != nil {
             log.Fatalf("%s", err)
           }
@@ -325,7 +325,7 @@ func SendExperimentPayload(comm communication.Communication, obj *corev1.Pod, in
 
 func sendExperimentPayload(comm communication.Communication, pod *corev1.Pod, in time.Time, out time.Time, queueName string, hostname string) bool{
 
-  respBytes, err := json.Marshal(ExperimentPayload{Type:"Scheduler",InTime:in,OutTime:out,Pod:pod,Hostname: hostname})
+  respBytes, err := json.Marshal(communication.ExperimentPayload{Type:"Scheduler",InTime:in,OutTime:out,Pod:pod,Hostname: hostname})
   if err != nil {
     log.Fatalf("%s", err)
   }

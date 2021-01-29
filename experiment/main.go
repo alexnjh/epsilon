@@ -12,6 +12,7 @@ import (
   jsoniter "github.com/json-iterator/go"
   configparser "github.com/bigkevmcd/go-configparser"
 	_ "github.com/mattn/go-sqlite3" // Import go-sqlite3 library
+  communication "github.com/alexnjh/epsilon/communication"
 )
 
 const (
@@ -141,7 +142,7 @@ func main(){
   }
 
   // Attempt to connect to the rabbitMQ server
-  comm, err := NewRabbitMQCommunication(fmt.Sprintf("amqp://%s:%s@%s:%s/",mqUser, mqPass, mqHost, mqPort))
+  comm, err := communication.NewRabbitMQCommunication(fmt.Sprintf("amqp://%s:%s@%s:%s/",mqUser, mqPass, mqHost, mqPort))
   if err != nil {
     log.Fatalf(err.Error())
   }
@@ -194,7 +195,7 @@ func main(){
   }
 }
 
-func ExperimentProcess(handler *DatabaseHandler, comm Communication, msgs <-chan amqp.Delivery, closed chan<- bool){
+func ExperimentProcess(handler *DatabaseHandler, comm communication.Communication, msgs <-chan amqp.Delivery, closed chan<- bool){
 
   // Loop through all the messages in the queue
   for d := range msgs {
@@ -202,7 +203,7 @@ func ExperimentProcess(handler *DatabaseHandler, comm Communication, msgs <-chan
     log.Infof("Message received")
 
     // Convert json message to schedule request object
-    var payload ExperimentPayload
+    var payload communication.ExperimentPayload
     if err := json.Unmarshal(d.Body, &payload); err != nil {
         panic(err)
     }

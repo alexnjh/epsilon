@@ -57,8 +57,11 @@ github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuy
 github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
 github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
 github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk541a8SKzHPHnH3zbiI+7dagKZ0cgpgrD7Fyho=
+github.com/alexnjh/epsilon v0.0.3 h1:cZxXSqnP2ZhyoC2428QvNfxNiZVKYRvNM26+wbaVd7E=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129103033-c81fe4affdf0 h1:7fCgzWlqhLgaL0fY7ZVqf1XYWIRBUukPOSvnlEIXuD4=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129103033-c81fe4affdf0/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
+github.com/alexnjh/epsilon/communication v0.0.0-20210129144732-7549bb8cdae5 h1:sWLp8rq60TNeLnjru5Q+NEUZkwV/AjWz8Ivo/KrmcrQ=
+github.com/alexnjh/epsilon/communication v0.0.0-20210129144732-7549bb8cdae5/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/apache/thrift v0.12.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
 github.com/apache/thrift v0.13.0/go.mod h1:cp2SuWMxlEZw2r+iP2GNCdIi4C1qmUzdZFSVb+bacwQ=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
