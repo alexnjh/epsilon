@@ -34,6 +34,8 @@ import (
   corelisters "k8s.io/client-go/listers/core/v1"
   corev1 "k8s.io/api/core/v1"
   communication "github.com/alexnjh/epsilon/communication"
+  gpsched "github.com/alexnjh/epsilon/general_purpose_scheduler"
+  ex "github.com/alexnjh/epsilon/experiment"
 )
 
 // Handler interface contains the methods that are required
@@ -140,7 +142,7 @@ func (t *PodHandler) sendScheduleRequest(key string, timestamp time.Time, queueN
 
   timeElapsed := time.Since(timestamp);
 
-  respBytes, err := json.Marshal(ScheduleRequest{Key:key,LastBackOffTime:2,ProcessedTime:timeElapsed,Message: ""})
+  respBytes, err := json.Marshal(gpsched.ScheduleRequest{Key:key,LastBackOffTime:2,ProcessedTime:timeElapsed,Message: ""})
   if err != nil {
     log.Fatalf("%s", err)
   }
@@ -156,7 +158,7 @@ func (t *PodHandler) sendScheduleRequest(key string, timestamp time.Time, queueN
 
 func (t *PodHandler) sendExperimentPayload(pod *corev1.Pod, in time.Time, out time.Time, queueName string, hostname string) bool{
 
-  respBytes, err := json.Marshal(ExperimentPayload{Type:"Coordinator",InTime:in,OutTime:out,Pod:pod,Hostname: hostname})
+  respBytes, err := json.Marshal(ex.ExperimentPayload{Type:"Coordinator",InTime:in,OutTime:out,Pod:pod,Hostname: hostname})
   if err != nil {
     log.Fatalf("%s", err)
   }
