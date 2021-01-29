@@ -3,8 +3,8 @@ module github.com/alexnjh/epsilon/general_purpose_scheduler
 go 1.14
 
 require (
-  github.com/alexnjh/epsilon/communication v0.0.0-20210129103033-c81fe4affdf0
-  github.com/MichaelTJones/pcg v0.0.0-20180122055547-df440c6ed7ed
+	github.com/MichaelTJones/pcg v0.0.0-20180122055547-df440c6ed7ed
+	github.com/alexnjh/epsilon/communication v0.0.0-20210129135438-abc23412f3ba
 	github.com/bigkevmcd/go-configparser v0.0.0-20200217161103-d137835d2579
 	github.com/davidminor/gorand v0.0.0-20161120223607-283446f2caf5
 	github.com/davidminor/uint128 v0.0.0-20141227063632-5745f1bf8041 // indirect

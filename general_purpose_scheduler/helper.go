@@ -18,7 +18,7 @@ All functions inside this file are common functions that may be used by multiple
 functions
 */
 
-package general_purpose_scheduler
+package main
 
 import (
   "os"

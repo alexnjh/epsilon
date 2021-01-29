@@ -16,7 +16,7 @@ limitations under the License.
 
 */
 
-package coordinator
+package main
 
 import (
   "fmt"

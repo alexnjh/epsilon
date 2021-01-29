@@ -17,7 +17,7 @@ All functions inside this file is for execution in a goroutine/thread or seperat
 
 */
 
-package general_purpose_scheduler
+package main
 
 import (
   "fmt"

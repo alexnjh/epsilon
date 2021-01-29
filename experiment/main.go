@@ -1,4 +1,4 @@
-package experiment
+package main
 
 import (
   "os"

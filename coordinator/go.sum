@@ -72,6 +72,8 @@ github.com/alexnjh/epsilon/communication v0.0.0-20210129132005-9871efbddb56 h1:K
 github.com/alexnjh/epsilon/communication v0.0.0-20210129132005-9871efbddb56/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129135022-258b4f78a52c h1:dbGxQG6/wVaE6bt4YeqyuAdJAQrxFmEvgGpvpzN3rbQ=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129135022-258b4f78a52c/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
+github.com/alexnjh/epsilon/communication v0.0.0-20210129135438-abc23412f3ba h1:fnlWppU7vbfhBwMVJcXPyO2j8LfiloWF0Zymo+FPlYQ=
+github.com/alexnjh/epsilon/communication v0.0.0-20210129135438-abc23412f3ba/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/alexnjh/epsilon/experiment v0.0.0-20210129113719-0f00beb417e0 h1:VgUslZCXbAoCatwGjnXKO+IAj6XKuMKyWwva2frvVBY=
 github.com/alexnjh/epsilon/experiment v0.0.0-20210129113719-0f00beb417e0/go.mod h1:DLOccSJUK5Br1bC0cG+QAtW+xM4HcYKC7Z65ELnWi8Q=
 github.com/alexnjh/epsilon/experiment v0.0.0-20210129132005-9871efbddb56 h1:DkWVnaDZpj1ONa5FgHTNQ8MlqnKRRgShZSfk6ZpjKhU=

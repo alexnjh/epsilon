@@ -19,7 +19,7 @@ operations of the scheduler.
 
 */
 
-package general_purpose_scheduler
+package main
 
 import (
   "time"

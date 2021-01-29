@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */
-package coordinator
+package main
 
 import (
 	"os"
@@ -29,6 +29,7 @@ import (
   "k8s.io/client-go/util/workqueue"
   "github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+  "github.com/alexnjh/epsilon/coordinator/helper"
 
   kubeinformers "k8s.io/client-go/informers"
   log "github.com/sirupsen/logrus"
@@ -52,9 +53,9 @@ func main() {
   var err error
 
   if len(confDir) != 0 {
-    config, err = getConfig(confDir)
+    config, err = helper.GetConfig(confDir)
   }else{
-    config, err = getConfig(DefaultConfigPath)
+    config, err = helper.GetConfig(DefaultConfigPath)
   }
 
   var mqHost, mqPort, mqUser, mqPass, mqManagePort, defaultQueue, hostName string
@@ -118,7 +119,7 @@ func main() {
   var requestsCounter uint64 = 0
 
 	// get the Kubernetes client for communicating with the kubernetes API server
-	client := getKubernetesClient()
+	client := helper.GetKubernetesClient()
 
   // Create the required informer and listers for kubernetes resources
   kubefactory := kubeinformers.NewSharedInformerFactory(client, time.Second*30)

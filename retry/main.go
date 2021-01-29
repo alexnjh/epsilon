@@ -16,7 +16,7 @@ limitations under the License.
 
 */
 
-package retry
+package main
 
 import (
   "os"
