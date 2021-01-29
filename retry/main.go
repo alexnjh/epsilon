@@ -157,7 +157,7 @@ func RetryProcess(comm communication.Communication, msgs <-chan amqp.Delivery, c
   // Loop through all the messages in the queue
   for d := range msgs {
     // Convert json message to schedule request object
-    var req RetryRequest
+    var req communication.RetryRequest
     if err := json.Unmarshal(d.Body, &req); err != nil {
         panic(err)
     }
@@ -170,7 +170,7 @@ func RetryProcess(comm communication.Communication, msgs <-chan amqp.Delivery, c
 
 }
 
-func WaitAndSend(comm communication.Communication, obj RetryRequest, duration time.Duration){
+func WaitAndSend(comm communication.Communication, obj communication.RetryRequest, duration time.Duration){
 
   time.Sleep(duration)
 

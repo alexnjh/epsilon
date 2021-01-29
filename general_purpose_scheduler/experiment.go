@@ -27,7 +27,6 @@ import (
   corev1 "k8s.io/api/core/v1"
   log "github.com/sirupsen/logrus"
   communication "github.com/alexnjh/epsilon/communication"
-  ex "github.com/alexnjh/epsilon/experiment"
 )
 
 // Use for sending experiment data (Not used in normal operations)
@@ -58,7 +57,7 @@ func SendExperimentPayload(comm communication.Communication, obj *corev1.Pod, in
 // Use for sending experiment data (Not used in normal operations)
 func sendExperimentPayload(comm communication.Communication, pod *corev1.Pod, in time.Time, out time.Time, queueName string, hostname string) bool{
 
-  respBytes, err := json.Marshal(ex.ExperimentPayload{Type:"Scheduler",InTime:in,OutTime:out,Pod:pod,Hostname: hostname})
+  respBytes, err := json.Marshal(communication.ExperimentPayload{Type:"Scheduler",InTime:in,OutTime:out,Pod:pod,Hostname: hostname})
   if err != nil {
     log.Fatalf("%s", err)
   }

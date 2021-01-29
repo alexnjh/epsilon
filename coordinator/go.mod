@@ -10,7 +10,7 @@ require (
 	github.com/alexnjh/epsilon/communication v0.0.0-20210129132005-9871efbddb56
 	github.com/alexnjh/epsilon/experiment v0.0.0-20210129132005-9871efbddb56
 	github.com/alexnjh/epsilon/general_purpose_scheduler v0.0.0-20210129132005-9871efbddb56
-	github.com/alexnjh/epsilon/retry v0.0.0-20210129132005-9871efbddb56 // indirect
+	github.com/alexnjh/epsilon/retry v0.0.0-20210129134008-680cbc940bd7 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a // indirect
 	github.com/bigkevmcd/go-configparser v0.0.0-20210106142102-909504547ead
 	github.com/blang/semver v3.5.1+incompatible // indirect
