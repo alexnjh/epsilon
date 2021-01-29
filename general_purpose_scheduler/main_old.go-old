@@ -1,0 +1,210 @@
+package main
+
+import (
+	log "github.com/sirupsen/logrus"
+  "encoding/json"
+  "fmt"
+  "net/http"
+  "net/url"
+  "strconv"
+  "io/ioutil"
+  corev1 "k8s.io/api/core/v1"
+	"github.com/streadway/amqp"
+)
+
+type CommitRequest struct {
+  Status  string
+  Description string
+  NodeName string
+  Pod corev1.Pod
+}
+
+type PromResponse struct {
+	Status string
+	Data PromData
+}
+
+type PromData struct {
+  ResultType string
+  Result []PromItem
+}
+
+type PromItem struct {
+  Metric map[string]string
+  Value []interface{}
+}
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
+}
+
+func main() {
+	conn, err := amqp.Dial("amqp://guest:guest@10.10.10.201:5672/")
+	failOnError(err, "Failed to connect to RabbitMQ")
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	failOnError(err, "Failed to open a channel")
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(
+		"distributed", // name
+		true,   // durable
+		false,   // delete when unused
+		false,   // exclusive
+		false,   // no-wait
+		nil,     // arguments
+	)
+	failOnError(err, "Failed to declare a queue")
+
+	msgs, err := ch.Consume(
+		q.Name, // queue
+		"",     // consumer
+		true,   // auto-ack
+		false,  // exclusive
+		false,  // no-local
+		false,  // no-wait
+		nil,    // args
+	)
+	failOnError(err, "Failed to register a consumer")
+
+	forever := make(chan bool)
+
+	go func() {
+		for d := range msgs {
+
+      var node_to_use = ""
+      var obj corev1.Pod
+      if err := json.Unmarshal(d.Body, &obj); err != nil {
+		      log.Fatalf("%s", err)
+    	}
+
+      memory := obj.Spec.Containers[0].Resources.Requests.Memory().Value()
+
+      formData := url.Values{
+        "query": {"node_memory_MemFree_bytes{instance=~\"k8s-worker.*\"}"},
+        "timeout": {"5"},
+      }
+
+      resp, err := http.PostForm("http://10.10.10.200:9090/api/v1/query",formData)
+
+      if(err != nil){
+		      log.Fatalf("%s", err)
+      }
+
+      defer resp.Body.Close()
+
+      body, err := ioutil.ReadAll(resp.Body)
+
+      if(err != nil){
+		      log.Fatalf("%s", err)
+      }
+
+      var response PromResponse
+      json.Unmarshal(body, &response)
+
+      if(response.Status != "success"){
+        log.Fatalf("Metric request failed")
+      }
+
+      for n := range response.Data.Result {
+
+        metric := response.Data.Result[n].Value[1].(string)
+        if value , err := strconv.Atoi(metric); err == nil {
+            if int64(value) > memory {
+              node_to_use = response.Data.Result[n].Metric["instance"]
+              fmt.Println("Pod will be scheduled to", node_to_use)
+
+              payload := CommitRequest{
+                Status: "Succesfull",
+                Description: "No errors",
+                NodeName: node_to_use,
+                Pod: obj,
+              }
+
+              respBytes, err := json.Marshal(payload)
+              if err != nil {
+		            log.Fatalf("%s", err)
+              }
+
+              sendJsonToQueue(respBytes)
+              break
+            }
+        } else {
+            fmt.Println(metric, "is not an integer.")
+        }
+
+      }
+
+      // Failed scheduling
+
+      if node_to_use == "" {
+        payload := CommitRequest{
+          Status: "Failed",
+          Description: "No compatible nodes to schedule pod",
+          NodeName: "",
+          Pod: obj,
+        }
+
+        respBytes, err := json.Marshal(payload)
+        if err != nil {
+          log.Fatalf("%s", err)
+          return
+        }
+
+        sendJsonToQueue(respBytes)
+
+        fmt.Println("Pod will not be scheduled as there are no available nodes")
+      }
+
+
+		}
+	}()
+
+	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+	<-forever
+}
+
+func sendJsonToQueue(respBytes []byte){
+
+  conn, err := amqp.Dial("amqp://guest:guest@10.10.10.201:5672/")
+  if err != nil {
+    log.Fatalf("%s", err)
+    return
+  }
+  defer conn.Close()
+
+  ch, err := conn.Channel()
+  if err != nil {
+		log.Fatalf("%s", err)
+    return
+  }
+  defer ch.Close()
+
+  q, err := ch.QueueDeclare(
+    "commit", // name
+    true,   // durable
+    false,   // delete when unused
+    false,   // exclusive
+    false,   // no-wait
+    nil,     // arguments
+  )
+
+  failOnError(err, "Failed to declare a queue")
+  err = ch.Publish(
+  "",     // exchange
+  q.Name, // routing key
+  false,  // mandatory
+  false,  // immediate
+  amqp.Publishing {
+    ContentType: "text/json",
+    Body:        respBytes,
+  })
+
+  if err != nil {
+		log.Fatalf("%s", err)
+    return
+  }
+}

@@ -1,0 +1,456 @@
+package main
+
+import (
+  "context"
+  "time"
+  "fmt"
+  "os"
+  "math/rand"
+
+	"github.com/streadway/amqp"
+  "k8s.io/client-go/tools/cache"
+  "k8s.io/client-go/kubernetes"
+  "k8s.io/client-go/util/retry"
+  "k8s.io/apimachinery/pkg/api/errors"
+  "scheduler_unit/k8s.io/kubernetes/pkg/features"
+  "scheduler_unit/k8s.io/kubernetes/pkg/controller/volume/scheduling"
+
+  corev1 "k8s.io/api/core/v1"
+  log "github.com/sirupsen/logrus"
+  sched "scheduler_unit/scheduler"
+  kubeinformers "k8s.io/client-go/informers"
+  jsoniter "github.com/json-iterator/go"
+  framework "scheduler_unit/framework/v1alpha1"
+  corelisters "k8s.io/client-go/listers/core/v1"
+  internalcache "scheduler_unit/internal/cache"
+  utilfeature "k8s.io/apiserver/pkg/util/feature"
+  metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+const (
+
+  // Maximum backoff time before the scheduler stop trying to schedule the pod
+  maxBackOffTime = 64
+
+  //
+  PodBackoffExceeded corev1.PodPhase = "PodBackoffExceeded"
+)
+
+// Initialize json encoder
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
+
+func main() {
+
+
+  // Get the Kubernetes client for communicating with API server
+	client := getKubernetesClient()
+
+  // Create the required resource listers and informers
+  kubefactory := kubeinformers.NewSharedInformerFactory(client, time.Second*30)
+  node_informer := kubefactory.Core().V1().Nodes().Informer()
+  pod_informer := kubefactory.Core().V1().Pods().Informer()
+  node_lister := kubefactory.Core().V1().Nodes().Lister()
+  pod_lister := kubefactory.Core().V1().Pods().Lister()
+
+  // Create volume binders for the different storage options
+  volumeBinder := scheduling.NewVolumeBinder(
+		client,
+		kubefactory.Core().V1().Nodes(),
+		kubefactory.Storage().V1().CSINodes(),
+		kubefactory.Core().V1().PersistentVolumeClaims(),
+		kubefactory.Core().V1().PersistentVolumes(),
+		kubefactory.Storage().V1().StorageClasses(),
+		time.Duration(10)*time.Second,
+	)
+
+  //Initialize queue to get ready to receive scheduling requests
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://guest:guest@%s:%s/",os.Getenv("MQ_HOST"),os.Getenv("MQ_PORT")))
+	failOnError(err, "Failed to connect to RabbitMQ")
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	failOnError(err, "Failed to open a channel")
+	defer ch.Close()
+
+  ch.Qos(
+    1,                // prefetch count
+    0,                // prefetch size
+    false,            // global
+  )
+
+	_, err = ch.QueueDeclare(
+		"distributed", // name
+		true,   // durable
+		false,   // delete when unused
+		false,   // exclusive
+		false,   // no-wait
+		nil,     // arguments
+	)
+	failOnError(err, "Failed to declare a queue")
+
+	msgs, err := ch.Consume(
+		"distributed", // queue
+		"",     // consumer
+		false,   // auto-ack
+		false,  // exclusive
+		false,  // no-local
+		false,  // no-wait
+		nil,    // args
+	)
+	failOnError(err, "Failed to register a consumer")
+
+  // use a channel to synchronize the finalization for a graceful shutdown
+  stopCh := make(chan struct{})
+  defer close(stopCh)
+  kubefactory.Start(stopCh)
+
+
+  // Do the initial synchronization (one time) to populate resources
+  kubefactory.WaitForCacheSync(stopCh)
+
+  // Create a cache for the scheduler
+  schedulerCache := internalcache.New(30*time.Second, stopCh)
+
+  // Create scheduler object
+  main_sched, err := sched.New(volumeBinder, client, schedulerCache, kubefactory, node_lister, pod_lister, false, 10.0)
+
+  // Scheduler initialization failed
+	failOnError(err, "Unable to create scheduler")
+
+  // Add event handlers to update local state
+  addAllEventHandlers(main_sched,kubefactory,node_informer,pod_informer)
+
+  // Start go routine to start consuming messages
+	go ScheduleProcess(main_sched, client, pod_lister, msgs)
+
+	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+
+  // Check for connection failures and reconnect
+  for {
+
+    if err := <-conn.NotifyClose(make(chan *amqp.Error)); err != nil {
+      log.Errorf("Disconnected from message server and attempting to reconnect")
+      for{
+        conn, ch, msgs = Reconnect()
+        if(msgs != nil){
+          // Start go routine to start consuming messages
+          go ScheduleProcess(main_sched, client, pod_lister, msgs)
+          log.Errorf("Reconnected to message server")
+          break
+        }
+        // Sleep for a random time before trying again
+        time.Sleep(time.Duration(rand.Intn(10))*time.Second)
+      }
+
+    }
+  }
+}
+
+// Does scheduling operations and should be executed in a goroutine
+func ScheduleProcess(s *sched.Scheduler, client kubernetes.Interface, podLister corelisters.PodLister, msgs <-chan amqp.Delivery){
+
+  // Loop through all the messages in the queue
+  for d := range msgs {
+
+    // Record time of processing
+    timestamp := time.Now()
+
+    // Convert json message to schedule request object
+    var req ScheduleRequest
+
+    if err := json.Unmarshal(d.Body, &req); err != nil {
+        panic(err)
+    }
+
+
+    // Extract the pod name and namespace from the request
+    key := string(req.Key);
+
+    // Convert the namespace/name string into a distinct namespace and name
+    namespace, name, err := cache.SplitMetaNamespaceKey(key)
+    if err != nil {
+      log.Errorf("%s", err)
+    }
+
+    obj, err := client.CoreV1().Pods(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+
+
+    // Check if pod still exist in the kube-api server if not ignore it
+    if err == nil && obj != nil{
+
+      log.Infof("Scheduling %s",obj.Name)
+
+      // Start scheduling the pod
+      result, err := s.Schedule(context.TODO(), obj)
+
+      if err != nil {
+
+        // Print the error in the event the scheduler is unable to schedule the pod
+        log.Errorf("%s", err)
+
+        // Check scheduling request last back off time and check if it exceeds the maximum backoff time
+        if (req.LastBackOffTime >= maxBackOffTime){
+
+          go AddPodEvent(client,obj,fmt.Sprintf("Scheduler will not retry scheduling; Reason: %s",err.Error()),"Fatal")
+
+          obj.Status.Phase = PodBackoffExceeded
+
+          client.CoreV1().Pods(obj.Namespace).UpdateStatus(context.TODO(), obj, metav1.UpdateOptions{});
+
+        }else{
+
+          // If backoff time not exceeded, multiply the last backoff time by 2 and send it to backoff queue
+          req.LastBackOffTime = req.LastBackOffTime*2
+          req.Message = err.Error()
+
+          respBytes, err := json.Marshal(req)
+          if err != nil {
+            log.Fatalf("%s", err)
+          }
+
+          go AddPodEvent(client,obj,fmt.Sprintf("Scheduler will retry in %d seconds; Reason: %s",req.LastBackOffTime,req.Message),"Warning")
+
+          // Send pod to backoff queue to try again
+          sendJsonToBackOffQueue(req.LastBackOffTime,respBytes)
+        }
+
+        d.Ack(true)
+
+      }else if (sched.ScheduleResult{}) != result{
+
+        // If no error detected is preemption required.
+        // This can be known by checking if the NorminatedPod is nil
+
+        // Run premption process?
+        if (result.NorminatedPod != nil){
+          PreemptionProcess(client,result.SuggestedHost,obj,result.NorminatedPod,int64(30),req.ProcessedTime,timestamp,result.NorminatedPod.Name)
+        }else{
+          log.Infof("Scheduling Pod %s to %s", name, result.SuggestedHost)
+          bind(client,*obj,result.SuggestedHost,req.ProcessedTime,timestamp)
+        }
+
+        d.Ack(true)
+      }else{
+        d.Nack(true, true)
+      }
+    }else{
+      d.Ack(true)
+    }
+  }
+
+}
+
+// Reconnect to message queue
+func Reconnect() (*amqp.Connection, *amqp.Channel, <-chan amqp.Delivery){
+  conn, err := amqp.Dial(fmt.Sprintf("amqp://guest:guest@%s:%s/",os.Getenv("MQ_HOST"),os.Getenv("MQ_PORT")))
+
+  if err != nil {
+    return nil,nil,nil
+  }
+
+  ch, err := conn.Channel()
+
+  if err != nil {
+    return nil,nil,nil
+  }
+
+  ch.Qos(
+    1,                // prefetch count
+    0,                // prefetch size
+    false,            // global
+  )
+
+  _, err = ch.QueueDeclare(
+    "distributed", // name
+    true,   // durable
+    false,   // delete when unused
+    false,   // exclusive
+    false,   // no-wait
+    nil,     // arguments
+  )
+
+  if err != nil {
+    return nil,nil,nil
+  }
+
+  msgs, err := ch.Consume(
+    "distributed", // queue
+    "",     // consumer
+    false,   // auto-ack
+    false,  // exclusive
+    false,  // no-local
+    false,  // no-wait
+    nil,    // args
+  )
+
+  if err != nil {
+    return nil,nil,nil
+  }
+
+  return conn,ch,msgs
+}
+
+// Add a new pod event to the pod
+func AddPodEvent(client kubernetes.Interface, obj *corev1.Pod, message string, typeOfError string){
+  // Update API server to inform admin that the pod cannot be deployed and require manual intervention
+  timestamp := time.Now().UTC()
+  client.CoreV1().Events(obj.Namespace).Create(context.TODO(), &corev1.Event{
+    Count:          1,
+    Message:        message,
+    Reason:         "Error",
+    LastTimestamp:  metav1.NewTime(timestamp),
+    FirstTimestamp: metav1.NewTime(timestamp),
+    Type:           typeOfError,
+    Source: corev1.EventSource{
+      Component: "custom",
+    },
+    InvolvedObject: corev1.ObjectReference{
+      Kind:      "Pod",
+      Name:      obj.Name,
+      Namespace: obj.Namespace,
+      UID:       obj.UID,
+    },
+    ObjectMeta: metav1.ObjectMeta{
+      GenerateName: obj.Name + "-",
+    },
+  },metav1.CreateOptions{})
+}
+
+// Execute preemption operations
+func PreemptionProcess(
+  client kubernetes.Interface,
+  suggestedHost string,
+  preemptorpod *corev1.Pod,
+  nominatedpod *corev1.Pod,
+  gracePeriod int64,
+  discoverTime time.Duration,
+  schedTime time.Time,
+  key string){
+
+  log.Infof("Starting preemption logic")
+
+  // Add a resource reservation by updating node status
+  AddNodeStatusofPreemption(client,suggestedHost,preemptorpod,nominatedpod);
+
+  // Delete the nominated pod based on given grace period and delete in foreground mode
+  deletePolicy := metav1.DeletePropagationBackground
+  if err := client.CoreV1().Pods(nominatedpod.Namespace).Delete(context.TODO(), nominatedpod.Name, metav1.DeleteOptions{
+    PropagationPolicy: &deletePolicy,
+    GracePeriodSeconds: &gracePeriod,
+  }); err != nil {
+    panic(err)
+  }
+
+  // Bind preemptor pod to cluster
+
+  for{
+
+    _, err := client.CoreV1().Pods(nominatedpod.Namespace).Get(context.TODO(), nominatedpod.Name, metav1.GetOptions{})
+
+    if err != nil && errors.IsNotFound(err) {
+      bind(client,*preemptorpod,suggestedHost,discoverTime,schedTime)
+      RemovePreemptionInfo(client,suggestedHost,key)
+      return
+    }
+
+    time.Sleep(time.Duration(rand.Intn(10))*time.Second)
+
+  }
+
+}
+
+func AddNodeStatusofPreemption(
+  client kubernetes.Interface,
+  suggestedHost string,
+  preemptorpod *corev1.Pod,
+  nominatedpod *corev1.Pod,
+  ){
+
+  preemptorPodRequest := computePodResourceRequest(preemptorpod)
+  cpu := preemptorPodRequest.MilliCPU
+  mem := preemptorPodRequest.Memory
+  disk := preemptorPodRequest.EphemeralStorage
+
+  retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+    // Update Node Information
+    node, err := client.CoreV1().Nodes().Get(context.TODO(),suggestedHost,metav1.GetOptions{});
+    nodeCond := node.Status.Conditions;
+    nodeCond = append(nodeCond,corev1.NodeCondition{
+      Type: "Preemption",
+      Status: "True",
+      LastHeartbeatTime: metav1.Now(),
+      LastTransitionTime: metav1.Now(),
+      Reason: fmt.Sprintf("%d,%d,%d",cpu,mem,disk),
+      Message: nominatedpod.Name,
+    });
+
+    node.Status.Conditions = nodeCond;
+
+    _ , err = client.CoreV1().Nodes().UpdateStatus(context.TODO(), node, metav1.UpdateOptions{});
+
+    return err
+  })
+
+  if retryErr != nil {
+    panic(fmt.Errorf("Update failed: %v", retryErr))
+  }
+
+}
+
+
+// Used to remove preemption update once pod is binded
+func RemovePreemptionInfo(client kubernetes.Interface, nodeName string, key string){
+
+  retryErr := retry.RetryOnConflict(retry.DefaultRetry, func() error {
+    // Retrieve the latest version of pod object before attempting update
+  	// RetryOnConflict uses exponential backoff to avoid exhausting the apiserver
+    node, err := client.CoreV1().Nodes().Get(context.TODO(),nodeName,metav1.GetOptions{});
+
+    nodeCond := node.Status.Conditions;
+
+    for idx, elem := range nodeCond {
+
+      if(len(nodeCond) <= idx){
+        break
+      }
+
+      // Remove any preemption entry that
+      if elem.Type == "Preemption" {
+        if elem.Message == key{
+          // Remove the element at index i from a.
+          nodeCond[idx] = nodeCond[len(nodeCond)-1] // Copy last element to index i.
+          nodeCond = nodeCond[:len(nodeCond)-1]   // Truncate slice.
+        }
+      }
+    }
+
+    node.Status.Conditions = nodeCond;
+    _ , err = client.CoreV1().Nodes().UpdateStatus(context.TODO(), node, metav1.UpdateOptions{});
+    return err
+  })
+
+  if retryErr != nil {
+    panic(fmt.Errorf("Update failed: %v", retryErr))
+  }
+
+}
+
+func computePodResourceRequest(pod *corev1.Pod) *framework.Resource {
+	result := &framework.Resource{}
+	for _, container := range pod.Spec.Containers {
+		result.Add(container.Resources.Requests)
+	}
+
+	// take max_resource(sum_pod, any_init_container)
+	for _, container := range pod.Spec.InitContainers {
+		result.SetMaxResource(container.Resources.Requests)
+	}
+
+	// If Overhead is being utilized, add to the total requests for the pod
+	if pod.Spec.Overhead != nil && utilfeature.DefaultFeatureGate.Enabled(features.PodOverhead) {
+		result.Add(pod.Spec.Overhead)
+	}
+
+	return result
+}

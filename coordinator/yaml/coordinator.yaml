@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pod-coordinator
+  namespace: custom-scheduler
+spec:
+  type: LoadBalancer
+  selector:
+    app: sched-pod-coordinator
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sched-pod-coordinator
+  namespace: custom-scheduler
+  labels:
+    app: sched-pod-coordinator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sched-pod-coordinator
+  template:
+    metadata:
+      labels:
+        app: sched-pod-coordinator
+    spec:
+      serviceAccountName: custom-scheduler
+      containers:
+      - name: sched-pod-coordinator
+        image: alexnjh/epsilon_coordinator_service:0.0.2
+        imagePullPolicy: Always
+        env:
+        - name: MQ_HOST
+          value: "sched-rabbitmq-0.sched-rabbitmq.custom-scheduler.svc.cluster.local"
+        - name: MQ_PORT
+          value: "5672"
+        - name: MQ_MANAGE_PORT
+          value: "15672"
+        - name: MQ_USER
+          value: "guest"
+        - name: MQ_PASS
+          value: "guest"
+        - name: DEFAULT_QUEUE
+          value: "epsilon.distributed"
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        resources:
+          limits:
+            memory: "50M"
+          requests:
+            memory: "10M"
+        ports:

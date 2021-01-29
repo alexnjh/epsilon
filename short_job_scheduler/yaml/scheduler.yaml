@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sched-shortjob-scheduler
+  namespace: custom-scheduler
+  labels:
+    app: sched-shortjob-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sched-shortjob-scheduler
+  template:
+    metadata:
+      labels:
+        app: sched-shortjob-scheduler
+    spec:
+      serviceAccountName: custom-scheduler
+      containers:
+      - name: sched-shortjob-scheduler
+        image: alexnjh/epsilon_sj_scheduler_service:0.0.1
+        imagePullPolicy: Always
+        env:
+        - name: MQ_HOST
+          value: "sched-rabbitmq-0.sched-rabbitmq.custom-scheduler.svc.cluster.local"
+        - name: MQ_PORT
+          value: "5672"
+        - name: MQ_USER
+          value: "guest"
+        - name: MQ_PASS
+          value: "guest"
+        - name: RECEIVE_QUEUE
+          value: "epsilon.shortjob"
+        - name: RETRY_QUEUE
+          value: "epsilon.backoff"
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        resources:
+          limits:
+            memory: "50M"
+          requests:
+            memory: "10M"
+        ports:

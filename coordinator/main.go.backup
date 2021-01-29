@@ -1,0 +1,238 @@
+ package main
+
+import (
+	"os"
+  "time"
+  "fmt"
+  "syscall"
+  "net/http"
+  "os/signal"
+  "sync/atomic"
+
+  "github.com/streadway/amqp"
+  "k8s.io/client-go/rest"
+  "k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/cache"
+	"k8s.io/client-go/tools/clientcmd"
+  "k8s.io/client-go/util/workqueue"
+  // "k8s.io/apimachinery/pkg/labels"
+  "github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+  kubeinformers "k8s.io/client-go/informers"
+  log "github.com/sirupsen/logrus"
+  corev1 "k8s.io/api/core/v1"
+  rabbithole "github.com/michaelklishin/rabbit-hole/v2"
+
+)
+
+const (
+  // Average scheduling time assuming no pods waiting to be schedule
+  AverageSchedulingTime = 25
+)
+
+// main code path
+func main() {
+
+  // declare the counter as unsigned int
+  var requestsCounter uint64 = 0
+
+  mqHost := os.Getenv("MQ_HOST")
+  mqManagePort := os.Getenv("MQ_MANAGE_PORT")
+  mqPort := os.Getenv("MQ_PORT")
+  mqUser := os.Getenv("MQ_USER")
+  mqPass := os.Getenv("MQ_PASS")
+  defaultQueue := os.Getenv("DEFAULT_QUEUE")
+
+	// get the Kubernetes client for communicating with the kubernetes API server
+	client := getKubernetesClient()
+
+  // Create the required informer and listers for kubernetes resources
+  kubefactory := kubeinformers.NewSharedInformerFactory(client, time.Second*30)
+  pod_informer := kubefactory.Core().V1().Pods().Informer()
+  pod_lister := kubefactory.Core().V1().Pods().Lister()
+
+  // Create a new workqueue internally to buffer pos creation request
+  queue := workqueue.NewRateLimitingQueue(workqueue.DefaultControllerRateLimiter())
+
+  // Create rabbitmq client
+  rmqc, _ := rabbithole.NewClient(fmt.Sprintf("http://%s:%s",mqHost,mqManagePort), mqUser, mqPass)
+
+  // Attempt to connect to the rabbitMQ server
+  // Change this portion if another MQ server is used
+  conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/",mqUser, mqPass, mqHost, mqPort))
+  if err != nil {
+    log.Fatalf("Failed MQ Connection")
+  }
+
+  ch, err := conn.Channel()
+  if err != nil {
+    log.Fatalf("Failed MQ Connection")
+  }
+
+  _, err = ch.QueueDeclare(
+    defaultQueue, // name
+    true,   // durable
+    false,   // delete when unused
+    false,   // exclusive
+    false,   // no-wait
+    nil,     // arguments
+  )
+
+  if err != nil {
+    log.Fatalf("Failed MQ Connection")
+  }
+
+  newCounter := prometheus.NewCounter(prometheus.CounterOpts{
+    Name: "pod_request_processed",
+    Help: "How many pod requests processed by the pod coordinator",
+  })
+
+  newCounter2 := prometheus.NewGauge(prometheus.GaugeOpts{
+    Name: "pod_request_total_in_1min",
+    Help: "How many Pod requests processed in the last 1 min (Updates every 1 minute)",
+  })
+  // register counter in Prometheus collector
+  prometheus.MustRegister(prometheus.NewCounterFunc(
+    prometheus.CounterOpts{
+        Name: "pod_request_total",
+        Help: "Counts number of pod requests received",
+    },
+    func() float64 {
+        return float64(atomic.LoadUint64(&requestsCounter))
+    }))
+
+  // Metrics have to be registered to be exposed:
+	prometheus.MustRegister(newCounter)
+	prometheus.MustRegister(newCounter2)
+
+  // Start metric server
+  go recordPodCountEvery(1*time.Minute,newCounter2,&requestsCounter)
+  go metricsServer()
+
+  // Create a pod controller
+  controller := PodController{
+  clientset: client,
+  informer: pod_informer,
+  lister: pod_lister,
+  queue: queue,
+  handler: &PodHandler{
+      defaultQueue: defaultQueue,
+      clientset: client,
+      lister: pod_lister,
+      rmqc: rmqc,
+      conn: conn,
+      ch: ch,
+      metricCounter: newCounter,
+    },
+  }
+
+
+  // Add a event handler to listen for new pods
+	pod_informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+		AddFunc: func(obj interface{}) {
+
+      key, err := cache.MetaNamespaceKeyFunc(obj)
+
+      if err == nil {
+
+        obj := obj.(*corev1.Pod)
+
+        if obj.Spec.SchedulerName != "custom" ||  obj.Spec.NodeName != ""{
+          return
+        }
+
+        // somewhere in your code
+        atomic.AddUint64(&requestsCounter, 1)
+        // Add to workqueue
+        queue.Add(key)
+      }
+		},
+		UpdateFunc: func(oldObj, newObj interface{}) {
+		},
+		DeleteFunc: func(obj interface{}) {
+		},
+	})
+
+	// use a channel to synchronize the finalization for a graceful shutdown
+	stopCh := make(chan struct{})
+	defer close(stopCh)
+
+  // Start the informers
+  kubefactory.Start(stopCh)
+
+  // run the controller loop to process items
+  controller.Run(stopCh)
+
+	// use a channel to handle OS signals to terminate and gracefully shut
+	// down processing
+	sigTerm := make(chan os.Signal, 1)
+	signal.Notify(sigTerm, syscall.SIGTERM)
+	signal.Notify(sigTerm, syscall.SIGINT)
+	<-sigTerm
+}
+
+
+// Retrieve the Kubernetes cluster client either from outside the cluster or inside the cluster
+func getKubernetesClient() (kubernetes.Interface){
+	// construct the path to resolve to `~/.kube/config`
+  config, err := rest.InClusterConfig()
+  if err != nil {
+    kubeConfigPath := os.Getenv("HOME") + "/.kube/config"
+
+    //create the config from the path
+    config, err = clientcmd.BuildConfigFromFlags("", kubeConfigPath)
+    if err != nil {
+      log.Fatalf("getInClusterConfig: %v", err)
+      panic("Failed to load kube config")
+    }
+  }
+
+  // generate the client based off of the config
+  client, err := kubernetes.NewForConfig(config)
+  if err != nil {
+    panic("Failed to create kube client")
+  }
+
+	log.Info("Successfully constructed k8s client")
+	return client
+}
+
+func recordPodCountEvery(d time.Duration, gauge prometheus.Gauge, currentPodReqCount *uint64) {
+
+  var previousCount = uint64(0)
+
+	for _ = range time.Tick(d) {
+    if (*currentPodReqCount != previousCount){
+      gauge.Set(float64(*currentPodReqCount-previousCount))
+      previousCount = *currentPodReqCount
+    }else{
+      gauge.Set(float64(0))
+    }
+	}
+
+}
+
+func metricsServer(){
+  // The Handler function provides a default handler to expose metrics
+  // via an HTTP server. "/metrics" is the usual endpoint for that.
+  http.Handle("/metrics", promhttp.Handler())
+  log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+//
+// func checkForPending(lister listers.PodLister, queue workqueue.RateLimitingInterface){
+//   // Get the pod resource with this namespace/name
+// 	podList, err := lister.List(labels.Nothing())
+// 	if err != nil {
+//     log.Errorf(err.Error())
+// 	}
+//
+//   for _,obj := range(podList){
+//     if obj.Spec.SchedulerName == "custom" &&  obj.Spec.NodeName == "" && len(obj.Spec.NodeName) == 0{
+//       if obj.CreationTimestamp.Add(15*time.Minute)
+//     }
+//   }
+//
+//
+// }
