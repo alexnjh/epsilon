@@ -31,7 +31,7 @@ const (
   MaxPriority = 100
 
   // Name is the name of the plugin used in the plugin registry and configurations.
-  const Name = "ResourcePriority"
+  Name = "ResourcePriority"
 )
 
 // ResourcePriority is a score plugin that favors nodes that have the most available resources.
@@ -40,9 +40,6 @@ type ResourcePriority struct {
 }
 
 var _ framework.ScorePlugin = &ResourcePriority{}
-
-// Name is the name of the plugin used in the plugin registry and configurations.
-const Name = "ResourcePriority"
 
 // Name returns name of the plugin. It is used in logs, etc.
 func (pl *ResourcePriority) Name() string {

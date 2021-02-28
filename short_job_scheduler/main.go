@@ -146,6 +146,7 @@ func main() {
   node_lister := kubefactory.Core().V1().Nodes().Lister()
   pod_lister := kubefactory.Core().V1().Pods().Lister()
 
+
   // Attempt to connect to the rabbitMQ server
   comm, err := communication.NewRabbitMQCommunication(fmt.Sprintf("amqp://%s:%s@%s:%s/",mqUser, mqPass, mqHost, mqPort))
   if err != nil {

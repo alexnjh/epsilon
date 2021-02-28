@@ -32,7 +32,7 @@ const (
   MaxPriority = 100
 
   // Name is the name of the plugin used in the plugin registry and configurations.
-  const Name = "RepeatPriority"
+  Name = "RepeatPriority"
 )
 
 // RepeatPriority is a score plugin that favors nodes that are allocated the least pods by the scheduler
