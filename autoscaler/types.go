@@ -5,23 +5,20 @@ import(
   "math"
   "strconv"
 
-  // "github.com/prometheus/client_golang/api"
-  // "github.com/prometheus/common/config"
-  // "github.com/RobinUS2/golang-moving-average"
-
   log "github.com/sirupsen/logrus"
   regression "github.com/sajari/regression"
   rabbithole "github.com/michaelklishin/rabbit-hole/v2"
-  // v1 "github.com/prometheus/client_golang/api/prometheus/v1"
 
 )
 
+// QueueTheoryPlugin decides based on approximation of the waiting time for all the pods current in the cluster wiating to be scheduled.
 type QueueTheoryPlugin struct{
   Name string
   Threshold float64
   targetURL string
 }
 
+// Creates a new QueueTheoryPlugin
 func NewQueueTheoryPlugin(name string,threshold float64,targetURL string) *QueueTheoryPlugin{
   return &QueueTheoryPlugin{
     Name: name,
@@ -30,6 +27,7 @@ func NewQueueTheoryPlugin(name string,threshold float64,targetURL string) *Queue
   }
 }
 
+// Compute processes the data and return a ComputeResult
 func (plugin *QueueTheoryPlugin) Compute(_, _, noOfSched float64) ComputeResult{
 
   metricMap := promToMap(plugin.targetURL)
@@ -51,6 +49,7 @@ func (plugin *QueueTheoryPlugin) Compute(_, _, noOfSched float64) ComputeResult{
 
 }
 
+// RabbitMQPlugin decides based on current queue utilization value given by the RabbitMQ service.
 type RabbitMQPlugin struct{
   Name string
   Vhost string
@@ -59,6 +58,7 @@ type RabbitMQPlugin struct{
   client *rabbithole.Client
 }
 
+// Creates a new RabbitMQPlugin
 func NewRabbitMQPlugin(name,vhost,queueName string,threshold float64,client *rabbithole.Client) *RabbitMQPlugin{
   return &RabbitMQPlugin{
     Name: name,
@@ -69,6 +69,7 @@ func NewRabbitMQPlugin(name,vhost,queueName string,threshold float64,client *rab
   }
 }
 
+// Compute processes the data and return a ComputeResult
 func (plugin *RabbitMQPlugin) Compute(_,_,_ float64) ComputeResult{
 
       qs, err := plugin.client.GetQueue(plugin.Vhost,plugin.QueueName)
@@ -85,12 +86,14 @@ func (plugin *RabbitMQPlugin) Compute(_,_,_ float64) ComputeResult{
 
 }
 
+// SchedProbPlugin decides based on the scheduler conflict probability based on current cluster state.
 type SchedProbPlugin struct{
   Name string
   QueueName string
   threshold float64
 }
 
+// Creates a new SchedProbPlugin
 func NewSchedProbPlugin(name,queueName string,threshold float64) *SchedProbPlugin{
   return &SchedProbPlugin{
     Name: name,
@@ -99,6 +102,7 @@ func NewSchedProbPlugin(name,queueName string,threshold float64) *SchedProbPlugi
   }
 }
 
+// Compute processes the data and return a ComputeResult
 func (plugin *SchedProbPlugin) Compute(_, noOfNodes, noOfSched float64) ComputeResult{
 
   p := calProb(noOfNodes,noOfSched)
@@ -111,6 +115,9 @@ func (plugin *SchedProbPlugin) Compute(_, noOfNodes, noOfSched float64) ComputeR
 
 }
 
+
+// LinearRegressionPlugin decides based on LinearRegression.
+// (NOTE this is not very effective and was use as a demo and should be replaced by a more robust machine learning algorithm)
 type LinearRegressionPlugin struct{
   Name string
   QueueName string
@@ -119,6 +126,7 @@ type LinearRegressionPlugin struct{
   r *regression.Regression
 }
 
+// Creates a new LinearRegressionPlugin
 func NewLinearRegressionPlugin(name,queueName string,threshold int) *LinearRegressionPlugin{
 
   r := new(regression.Regression)
@@ -136,6 +144,7 @@ func NewLinearRegressionPlugin(name,queueName string,threshold int) *LinearRegre
   }
 }
 
+// Compute processes the data and return a ComputeResult
 func (plugin *LinearRegressionPlugin) Compute(noOfPendingPods, noOfNodes, noOfSched float64) ComputeResult{
 
   plugin.dataCount+=1

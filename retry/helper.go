@@ -22,7 +22,7 @@ import (
   configparser "github.com/bigkevmcd/go-configparser"
 )
 
-
+// Get scheduler config file from config path
 func getConfig(path string) (*configparser.ConfigParser, error){
   p, err := configparser.NewConfigParserFromFile(path)
   if err != nil {

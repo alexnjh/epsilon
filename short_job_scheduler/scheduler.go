@@ -1,3 +1,21 @@
+/*
+
+Copyright (C) 2020 Alex Neo
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/
+
 package main
 
 import(
@@ -21,6 +39,7 @@ const (
 	DefaultMemoryRequest int64 = 200*1024*1024 // 200 MB
 )
 
+// ShortJobScheduler structure
 type ShortJobScheduler struct{
     previousNodeIndex   int
     clientset           kubernetes.Interface
@@ -28,6 +47,7 @@ type ShortJobScheduler struct{
     nodelister          corelisters.NodeLister
 }
 
+// Create new instance of a ShortJobScheduler
 func NewShortJobScheduler (clientset kubernetes.Interface, podlister corelisters.PodLister, nodelister corelisters.NodeLister) *ShortJobScheduler{
 
   // Get the pod resource with this namespace/name
@@ -45,9 +65,6 @@ func NewShortJobScheduler (clientset kubernetes.Interface, podlister corelisters
     podlister:          podlister,
     nodelister:         nodelister,
   }
-
-
-
 }
 
 // ObjectDeleted is called when an object is deleted
@@ -78,50 +95,14 @@ func (s *ShortJobScheduler) Schedule(pod *corev1.Pod) (name string, err error){
       s.previousNodeIndex = index
 
   }
-
-
   return "", errors.New("Unable to find a suitable node to schedule")
-
-
-
 }
 
-// UpdateNodeList is called when an object is deleted
+// Checks if the node is suitable for deploying the pod.
 func (s *ShortJobScheduler) checkNode(pod *corev1.Pod, node *corev1.Node) bool{
 
 
   if checkTaints(pod,node) {
-    // pods, err := s.clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{
-    //   FieldSelector: "spec.nodeName=" + node.Name,
-    // })
-
-    // if err != nil {
-    //   return false
-    // }
-  //
-  //   var totalCpu = int64(0)
-  //   var totalMem = int64(0)
-  //
-  //   pods.Items := append(pods.Items, pod)
-  //
-  //   for _, p := range(pods.Items){
-  //     for _, cont := range(p.Spec.Containers){
-  //       cpu, _ :=      cont.Resources.Requests.Cpu().AsInt64()
-  //       mem, _ :=      cont.Resources.Requests.Memory().AsInt64()
-  //
-  //       if cpu == 0 {
-  //         cpu = DefaultMilliCPURequest
-  //       }
-  //
-  //       if mem == 0 {
-  //         cpu = DefaultMemoryRequest
-  //       }
-  //
-  //       totalCpu+=cpu
-  //       totalMem+=mem
-  //
-  //     }
-  //   }
 
     var totalMem =  int64(0)
     capacity, _ :=   node.Status.Capacity.Memory().AsInt64()
@@ -145,6 +126,7 @@ func (s *ShortJobScheduler) checkNode(pod *corev1.Pod, node *corev1.Node) bool{
 
 }
 
+// Check taints of a node and ensure pod tolerates the taint.
 func checkTaints(pod *corev1.Pod, node *corev1.Node) bool{
 
   var passTaints = 0

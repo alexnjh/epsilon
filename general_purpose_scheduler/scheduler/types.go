@@ -37,6 +37,7 @@ type SchedulerVolumeBinder interface {
 	FindPodVolumes(pod *v1.Pod, node *v1.Node) (reasons ConflictReasons, err error)
 }
 
+// Contains the suggested host to schedule a pod and if preemption is required the name of the norminated pod.
 type ScheduleResult struct {
 
 	// Name of the scheduler suggest host

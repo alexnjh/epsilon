@@ -26,21 +26,21 @@ import (
 	framework "github.com/alexnjh/epsilon/general_purpose_scheduler/framework/v1alpha1"
 )
 
-// The two thresholds are used as bounds for the image score range. They correspond to a reasonable size range for
-// container images compressed and stored in registries; 90%ile of images on dockerhub drops into this range.
+
 const (
+  // The maximum priority value that the plugin returns
   MaxPriority = 100
+
+  // Name is the name of the plugin used in the plugin registry and configurations.
+  const Name = "RepeatPriority"
 )
 
-// ImageLocality is a score plugin that favors nodes that already have requested pod container's images.
+// RepeatPriority is a score plugin that favors nodes that are allocated the least pods by the scheduler
 type RepeatPriority struct {
 	handle framework.FrameworkHandle
 }
 
 var _ framework.ScorePlugin = &RepeatPriority{}
-
-// Name is the name of the plugin used in the plugin registry and configurations.
-const Name = "RepeatPriority"
 
 // Name returns name of the plugin. It is used in logs, etc.
 func (pl *RepeatPriority) Name() string {

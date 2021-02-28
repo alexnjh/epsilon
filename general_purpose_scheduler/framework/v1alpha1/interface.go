@@ -116,10 +116,13 @@ type FrameworkHandle interface {
   // VolumeBinder returns the volume binder used by scheduler.
   VolumeBinder() scheduling.SchedulerVolumeBinder
 
+  // Get current highest repeat factory among all the nodes in the cluster for this scheduler instance.
   GetHighestUsageFactor() int
 
+  // Get current repeat factory of a node.
   GetNodeUsageFactor(nodeName string) int
 
+  // Increase repeat factor of a specific node.
   IncreaseNodeUsageFactor(nodeName string)
 
 }
@@ -149,7 +152,7 @@ const (
 	// Skip is used when a bind plugin chooses to skip binding.
 	Skip
 )
-
+// Status contain the status and also the reasons for causing this status.
 type Status struct{
   code    Code
 	reasons []string

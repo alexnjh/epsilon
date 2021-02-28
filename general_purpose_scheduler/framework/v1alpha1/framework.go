@@ -159,23 +159,27 @@ func NewFramework(
     Weight: 1,
   })
 
-
+  // This plugin set consist of all the configured filter plugins.
   pluginSet := config.PluginSet{
     Enabled: pluginArr,
   }
 
+  // This plugin set consist of all the configured Prefilter plugins.
   pluginSet2 := config.PluginSet{
     Enabled: pluginArr2,
   }
 
+  // This plugin set consist of all the configured PreScore plugins.
   pluginSet3 := config.PluginSet{
     Enabled: pluginArr3,
   }
 
+  // This plugin set consist of all the configured Score plugins.
   pluginSet4 := config.PluginSet{
     Enabled: pluginArr4,
   }
 
+  // Combine all the plugin sets into a plugin list.
   plugins := config.Plugins{
     PreFilter: &pluginSet2,
     Filter: &pluginSet,
@@ -183,7 +187,7 @@ func NewFramework(
     Score: &pluginSet4,
   }
 
-
+  // Update scheduler plugin list and initializes the plugins.
   for _, e := range f.getExtensionPoints(&plugins) {
 		if err := updatePluginList(e.slicePtr, e.plugins, pluginsMap); err != nil {
       fmt.Println(err)
@@ -312,26 +316,32 @@ func (f *framework) runFilterPlugin(ctx context.Context, pl FilterPlugin, state 
 	return status
 }
 
+// Returns the client interface used by the framework.
 func (f *framework) ClientSet() (clientset.Interface){
   return f.clientSet
 }
 
+// Check if there is atleast one Filter plugin configured.
 func (f *framework) HasFilterPlugins() (bool){
   return (len(f.filterPlugins) > 0)
 }
 
+// Check if there is atleast one Score plugin configured.
 func (f *framework) HasScorePlugins() (bool){
   return (len(f.scorePlugins) > 0)
 }
 
+// Get the highest repeat factor for at the time of invoking this function.
 func (f *framework) GetHighestUsageFactor() (int){
   return f.highestRepeatFactor
 }
 
+// Get the current repeat factor for a specific node at the time of invoking this function.
 func (f *framework) GetNodeUsageFactor(nodeName string) (int){
   return f.nodeUsageMap[nodeName]
 }
 
+// Increase node repeat factory by 1 one function invoked.
 func (f *framework) IncreaseNodeUsageFactor(nodeName string){
 
   f.nodeUsageMap[nodeName] +=1

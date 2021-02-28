@@ -30,6 +30,7 @@ const (
   DefaultConfigPath = "/go/src/app/config.cfg"
 )
 
+
 func main() {
 
   // Get required values
@@ -116,11 +117,6 @@ func main() {
     fmt.Sprintf(defaultQueue): true,
   }
 
-  // log.Infof("%s,%s,%s,%s",mqHost,mqManagePort,mqUser,mqPass)
-
-  // set up signals so we handle the first shutdown signal gracefully
-	// stopCh := signals.SetupSignalHandler()
-  //
   kubeClient := getKubernetesClient()
   kubeInformerFactory := kubeinformers.NewSharedInformerFactory(kubeClient, time.Second*30)
   nodeInformer := kubeInformerFactory.Core().V1().Nodes().Informer()
@@ -221,6 +217,8 @@ func main() {
   }
 }
 
+
+// Update the replica count of the scheduler services
 func UpdateDeployment(client kubernetes.Interface, lister applisters.DeploymentLister, namespace string, queueName string, decision ComputeResult){
 
   if decision == DoNotScale {
@@ -268,7 +266,7 @@ func UpdateDeployment(client kubernetes.Interface, lister applisters.DeploymentL
 
 }
 
-
+// Convert prometheus formatted metrics into a map
 func promToMap(url string) map[string]string{
 
   metricMap := make(map[string]string)
@@ -296,6 +294,7 @@ func promToMap(url string) map[string]string{
   return metricMap
 }
 
+// Consolidate all the decisions made by the plugins and decide on the next course of action.
 func makeDecision(result []ComputeResult) ComputeResult{
   count := make(map[ComputeResult]int)
 
@@ -320,6 +319,7 @@ func makeDecision(result []ComputeResult) ComputeResult{
 
 }
 
+// Update kube-api server of the autoscaler's scale down operations
 func addScaleDownEvent(client kubernetes.Interface, obj *appsv1.Deployment){
   client.CoreV1().Events(obj.Namespace).Create(context.TODO(), &corev1.Event{
     Count:          1,
@@ -343,6 +343,7 @@ func addScaleDownEvent(client kubernetes.Interface, obj *appsv1.Deployment){
   },metav1.CreateOptions{})
 }
 
+// Update kube-api server of the autoscaler's scale up operations
 func addScaleUpEvent(client kubernetes.Interface, obj *appsv1.Deployment){
   client.CoreV1().Events(obj.Namespace).Create(context.TODO(), &corev1.Event{
     Count:          1,
@@ -366,6 +367,7 @@ func addScaleUpEvent(client kubernetes.Interface, obj *appsv1.Deployment){
   },metav1.CreateOptions{})
 }
 
+// Calculate the scheduler conflict probability
 // N = No of schedulers
 // K = No of nodes
 func calProb(N,K float64) float64{

@@ -140,7 +140,6 @@ func (f *Fit) PreFilter(ctx context.Context, cycleState *framework.CycleState, p
 // func (f *Fit) PreFilterExtensions() framework.PreFilterExtensions {
 // 	return nil
 // }
-
 func getPreFilterState(cycleState *framework.CycleState) (*preFilterState, error) {
 
 	c, err := cycleState.Read(preFilterStateKey)
@@ -195,7 +194,8 @@ func Fits(pod *v1.Pod, nodeInfo *framework.NodeInfo, ignoredExtendedResources se
 	return fitsRequest(computePodResourceRequest(pod), nodeInfo, ignoredExtendedResources)
 }
 
-
+// Unserialize preemption values to retreive reserved resources
+// The resource values are as follows [CPU,MEM,STORAGE]
 func getPremptionValues(pStr string) (int64,int64,int64){
 
   s := strings.Split(pStr, ",");
@@ -225,7 +225,7 @@ func getPremptionValues(pStr string) (int64,int64,int64){
   return int64(cpu),int64(mem),int64(storage);
 }
 
-
+// fitsRequest checks if a node have enough resources to deploy the pod including resource reserved for pods waiting deployment.
 func fitsRequest(podRequest *preFilterState, nodeInfo *framework.NodeInfo, ignoredExtendedResources sets.String) []InsufficientResource {
 
   var pMilliCPU = int64(0)

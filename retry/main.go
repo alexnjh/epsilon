@@ -31,6 +31,7 @@ import (
 )
 
 const (
+    // Default config path
     DefaultConfigPath = "/go/src/app/config.cfg"
 )
 
@@ -152,6 +153,7 @@ func main() {
 
 }
 
+// Executes the retry process and should be executed in a goroutine
 func RetryProcess(comm communication.Communication, msgs <-chan amqp.Delivery, closed chan<- bool){
 
   // Loop through all the messages in the queue
@@ -170,6 +172,7 @@ func RetryProcess(comm communication.Communication, msgs <-chan amqp.Delivery, c
 
 }
 
+// WaitAndSend delays the rescheduling of a pod based of backoff period
 func WaitAndSend(comm communication.Communication, obj communication.RetryRequest, duration time.Duration){
 
   time.Sleep(duration)

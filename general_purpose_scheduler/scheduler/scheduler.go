@@ -44,25 +44,32 @@ const (
 	SchedulerError = "SchedulerError"
 )
 
-// Scheduler schedules pods
+// Scheduler is responsible for scheduling pods
 type Scheduler struct {
 
+  // Kubernetes client interface (Use to fetch information from kube-api server).
   client clientset.Interface
 
+  // Plugin registry containing all the plugins constructors.
   registry framework.Registry
 
+  // Framework instance containing all the plugins that are initialized.
   fw framework.Framework
 
+  // Snapshot of the current cluster state.
   snapshot internalcache.Snapshot
 
+  // Volume binder for scheduler to bind volumes if needed.
   volumeBinder scheduling.SchedulerVolumeBinder
 
   // It is expected that changes made via SchedulerCache will be observed
 	// by NodeLister and Algorithm.
 	SchedulerCache internalcache.Cache
 
+  // Node lister that is used to list nodes from the local cache
   nodeLister corelisters.NodeLister
 
+  // Pod lister that is used to list pods from the local cache
   podLister corelisters.PodLister
 
 	// Disable pod preemption or not.
@@ -72,6 +79,7 @@ type Scheduler struct {
   percentageNodeScore int
 }
 
+// Invokes the scheduling routine
 func (s *Scheduler) Schedule(con context.Context, pod *v1.Pod) (scheduleResult ScheduleResult, err error){
 
 
