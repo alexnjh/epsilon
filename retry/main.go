@@ -164,7 +164,7 @@ func RetryProcess(comm communication.Communication, msgs <-chan amqp.Delivery, c
         panic(err)
     }
 
-    go WaitAndSend(comm, req,time.Duration(req.Req.LastBackOffTime)*time.Second)
+    go WaitAndSend(comm, req,time.Duration(req.Req.NextBackOffTime)*time.Second)
     d.Ack(true)
   }
 
@@ -176,6 +176,8 @@ func RetryProcess(comm communication.Communication, msgs <-chan amqp.Delivery, c
 func WaitAndSend(comm communication.Communication, obj communication.RetryRequest, duration time.Duration){
 
   time.Sleep(duration)
+
+  obj.Req.NextBackOffTime = obj.Req.NextBackOffTime*obj.Req.NextBackOffTime
 
   respBytes, err := json.Marshal(obj.Req)
   if err != nil {

@@ -140,7 +140,7 @@ func (t *PodHandler) sendScheduleRequest(key string, timestamp time.Time, queueN
 
   timeElapsed := time.Since(timestamp);
 
-  respBytes, err := json.Marshal(communication.ScheduleRequest{Key:key,LastBackOffTime:2,ProcessedTime:timeElapsed,Message: ""})
+  respBytes, err := json.Marshal(communication.ScheduleRequest{Key:key,NextBackOffTime:2,ProcessedTime:timeElapsed,Message: ""})
   if err != nil {
     log.Fatalf("%s", err)
   }

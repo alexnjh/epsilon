@@ -146,10 +146,10 @@ func main() {
     log.Fatalf(err.Error())
   }
 
-  log.Infof("RabbitMQ Server Information\n------------------------------")
+  log.Infof("RabbitMQ Server Information")
+  log.Infof("---------------------------")
   log.Infof("Management version: %s",res.ManagementVersion)
-  log.Infof("Erlang version: %s\n\n\n",res.ErlangVersion)
-
+  log.Infof("Erlang version: %s",res.ErlangVersion)
 
   // Initialize Plugins
 

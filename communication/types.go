@@ -10,7 +10,7 @@ Message structure for communicating with the Scheduler microservice
 */
 type ScheduleRequest struct {
   Key  string // A string containing pod details in the following format [pod name]@[namespace]
-  LastBackOffTime int // Previous backoff duration
+  NextBackOffTime int // next backoff duration
   ProcessedTime time.Duration // Total time taken to complete scheduling
   Message string // Supporting information if required [optional]
 }
