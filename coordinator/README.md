@@ -120,3 +120,18 @@ The **handle.go** file contains the pod handling algorithm and all the coodinato
 <br>
 
 ---
+
+<br>
+
+<a name="qna"/></a> 
+### :grey_exclamation: Common questions
+
+<dl>
+  <dt>How to change the SchedulerName used by Epsilon to something else</dt>
+  <dd>The SchedulerName can be changed by changing the name to check in the if statement in main.go at line 193.</dd>
+
+</dl>
+
+<br>
+
+---
