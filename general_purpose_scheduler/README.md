@@ -1,5 +1,5 @@
 ![title](https://alexneo.net/epsilon/scheduler.png "scheduler")
-## Retry Microservice
+## General Purpose Scheduler Microservice
 
 ---
 
@@ -18,7 +18,7 @@
 <a name="desc"/></a> 
 ### :grey_exclamation: Description
 
-The Retry service's goal is to reschedule pods that failed
+The Scheduler service's goal is to schedule newly created pods.
 
 <br>
 
@@ -28,7 +28,7 @@ The Retry service's goal is to reschedule pods that failed
 <br>
 
 <a name="deploy"/></a> 
-### :grey_exclamation: Deployment of the retry service
+### :grey_exclamation: Deployment of the scheduler service
 
 Before deploying the retry.yaml file, please configure the environment variables to the correct values used by the queue microservice.
 
@@ -42,7 +42,12 @@ Before deploying the retry.yaml file, please configure the environment variables
     - name: MQ_PASS
       value: "guest"
     - name: RECEIVE_QUEUE
+      value: "epsilon.distributed"
+    - name: RETRY_QUEUE
       value: "epsilon.backoff"
+
+**RECEIVE_QUEUE** indicates the queue the scheduler is going to be listening to for new pods send by the coordinator service.
+**RETRY_QUEUE** indicates the queue the scheduler is going to send failed pods to.
 
 <br>
 
@@ -51,25 +56,82 @@ Before deploying the retry.yaml file, please configure the environment variables
 <br>
 
 <a name="work"/></a> 
-### :grey_exclamation: Retry algorithm
+### :grey_exclamation: The General Purpose Scheduler algorithm
 
+![schedLifecycle](https://alexneo.net/epsilon/sched_lifecycle.JPG "scedLifecycle")
+
+
+### FETCH Stage
+---
 **[STEP 1]**
 <br>
-The retry service monitors the queue for new pods that failed.
+Wait for new pods to be send by the coordinator
 <br>
 
 **[STEP 2]**
 <br>
-When a pod that failed is recevied, the retry service will generate a backoff timer and wait for the backoff timer to pass
-<br>
+When a new pod is received, proceed with fetching the details of the received pod from the Kube API Server.
 
 **[STEP 3]**
 <br>
-Once the backoff duration had past, the retry service will send the failed pod back to its respective scheduling queue
+Once the details of the pod is fetched form the Kube API server. The pod details can be send to the PreFilter stage.
 <br>
 
-
+### PRE FILTER Stage
 ---
+**[STEP 1]**
+<br>
+Send the pod through a list of preconfigured PreFilter Plugins
+<br>
+
+**[STEP 2]**
+<br>
+Once the pod passes all the checks by the PreFilter Plugins, the pod will be sent to the Filter Stage
+<br>
+
+### FILTER Stage
+---
+**[STEP 1]**
+<br>
+Send the pod through a list of preconfigured Filter Plugins
+<br>
+
+**[STEP 2]**
+<br>
+Once the pod passes all the checks by the Filter Plugins, the pod will be sent to the PreScore Stage
+<br>
+
+### PRE SCORE Stage
+---
+**[STEP 1]**
+<br>
+Send the pod through a list of preconfigured PreScore Plugins
+<br>
+
+**[STEP 2]**
+<br>
+Once all the PreScore plugins intitnlizes the required variables for use on the next stage, the pod will be sent to the Score Stage
+<br>
+
+### SCORE Stage
+---
+**[STEP 1]**
+<br>
+Send the pod through a list of preconfigured Score Plugins
+<br>
+
+**[STEP 2]**
+<br>
+Once all the Score plugins return the  score value, the pod will be sent to the Score Stage
+<br>
+
+### BIND Stage
+---
+**[STEP 1]**
+<br>
+During the stage the scheduler will commit the changes to the cluster and ends the scheduling lifecycle. Only during this stage the pod is considered to be deployed.
+<br>
+
 
 <br>
 
