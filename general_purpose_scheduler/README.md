@@ -61,8 +61,7 @@ Before deploying the retry.yaml file, please configure the environment variables
 ![schedLifecycle](https://alexneo.net/epsilon/sched_lifecycle.JPG "scedLifecycle")
 
 
-### FETCH Stage
----
+### 1. FETCH Stage
 **[STEP 1]**
 <br>
 Wait for new pods to be send by the coordinator
@@ -77,8 +76,7 @@ When a new pod is received, proceed with fetching the details of the received po
 Once the details of the pod is fetched form the Kube API server. The pod details can be send to the PreFilter stage.
 <br>
 
-### PRE FILTER Stage
----
+### 2. PRE FILTER Stage
 **[STEP 1]**
 <br>
 Send the pod through a list of preconfigured PreFilter Plugins
@@ -89,8 +87,7 @@ Send the pod through a list of preconfigured PreFilter Plugins
 Once the pod passes all the checks by the PreFilter Plugins, the pod will be sent to the Filter Stage
 <br>
 
-### FILTER Stage
----
+### 3. FILTER Stage
 **[STEP 1]**
 <br>
 Send the pod through a list of preconfigured Filter Plugins
@@ -101,8 +98,7 @@ Send the pod through a list of preconfigured Filter Plugins
 Once the pod passes all the checks by the Filter Plugins, the pod will be sent to the PreScore Stage
 <br>
 
-### PRE SCORE Stage
----
+### 4. PRE SCORE Stage
 **[STEP 1]**
 <br>
 Send the pod through a list of preconfigured PreScore Plugins
@@ -113,8 +109,7 @@ Send the pod through a list of preconfigured PreScore Plugins
 Once all the PreScore plugins intitnlizes the required variables for use on the next stage, the pod will be sent to the Score Stage
 <br>
 
-### SCORE Stage
----
+### 5. SCORE Stage
 **[STEP 1]**
 <br>
 Send the pod through a list of preconfigured Score Plugins
@@ -125,15 +120,13 @@ Send the pod through a list of preconfigured Score Plugins
 Once all the Score plugins return the  score value, the pod will be sent to the Score Stage
 <br>
 
-### BIND Stage
----
+### 6. BIND Stage
 **[STEP 1]**
 <br>
 During the stage the scheduler will commit the changes to the cluster and ends the scheduling lifecycle. Only during this stage the pod is considered to be deployed.
 <br>
+---
 
-
-<br>
 
 <a name="dir"/></a> 
 ### :grey_exclamation: Directory Description
