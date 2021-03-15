@@ -125,6 +125,7 @@ Once all the Score plugins return the  score value, the pod will be sent to the 
 <br>
 During the stage the scheduler will commit the changes to the cluster and ends the scheduling lifecycle. Only during this stage the pod is considered to be deployed.
 <br>
+
 ---
 
 
@@ -135,6 +136,12 @@ During the stage the scheduler will commit the changes to the cluster and ends t
   <dt>docker</dt>
   <dd>contain the dockerfile for generating the retry service docker image</dd>
   
+  <dt>framework</dt>
+  <dd>contains all the scheduling plugins implementations</dd>
+
+  <dt>internal</dt>
+  <dd>contains the cache implementaion used by the default kubernetes scheduler (Kube-Scheduler)</dd>
+
   <dt>yaml</dt>
   <dd>contain the deployment yaml file</dd>
   
@@ -147,7 +154,7 @@ During the stage the scheduler will commit the changes to the cluster and ends t
 <br>
 
 <a name="file"/></a> 
-### :grey_exclamation: File Description
+### :grey_exclamation: Key files to take note
 
 <dl>
   <dt>main.go</dt>
