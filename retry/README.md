@@ -51,14 +51,23 @@ Before deploying the retry.yaml file, please configure the environment variables
 <br>
 
 <a name="work"/></a> 
-### :grey_exclamation: Coordinator algorithm
+### :grey_exclamation: Retry algorithm
 
 **[STEP 1]**
 <br>
-The retry monitors the queue for new pods that failed.
-
-
+The retry service monitors the queue for new pods that failed.
 <br>
+
+**[STEP 2]**
+<br>
+When a pod that failed is recevied, the retry service will generate a backoff timer and wait for the backoff timer to pass
+<br>
+
+**[STEP 3]**
+<br>
+Once the backoff duration had past, the retry service will send the failed pod back to its respective scheduling queue
+<br>
+
 
 ---
 
@@ -91,6 +100,12 @@ The retry monitors the queue for new pods that failed.
 
 </dl>
 
+<dl>
+  <dt>helper.go</dt>
+  <dd>contains helper functions used by the main routine</dd>
+
+</dl>
+
 <br>
 
 ---
@@ -101,8 +116,8 @@ The retry monitors the queue for new pods that failed.
 ### :grey_exclamation: Common questions
 
 <dl>
-  <dt>test?</dt>
-  <dd></dd>
+  <dt>How to change the retry algorithm?</dt>
+  <dd>The function WaitAndSend() in line 176 of main.go, contains the implementation of the retry algorithm. By modifiying this function the retry algorithm can be modified.</dd>
 
 </dl>
 
