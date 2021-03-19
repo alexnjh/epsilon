@@ -62,69 +62,31 @@ Before deploying the retry.yaml file, please configure the environment variables
 
 
 ### 1. FETCH Stage
-**[STEP 1]**
-<br>
-Wait for new pods to be send by the coordinator
-<br>
-
-**[STEP 2]**
-<br>
-When a new pod is received, proceed with fetching the details of the received pod from the Kube API Server.
-
-**[STEP 3]**
-<br>
-Once the details of the pod is fetched form the Kube API server. The pod details can be send to the PreFilter stage.
-<br>
+1. Wait for new pods to be send by the coordinator
+2. When a new pod is received, proceed with fetching the details of the received pod from the Kube API Server.
+3. Once the details of the pod is fetched form the Kube API server. The pod details can be send to the PreFilter stage.
 
 ### 2. PRE FILTER Stage
-**[STEP 1]**
-<br>
-Send the pod through a list of preconfigured PreFilter Plugins
-<br>
 
-**[STEP 2]**
-<br>
-Once the pod passes all the checks by the PreFilter Plugins, the pod will be sent to the Filter Stage
-<br>
+1. Send the pod through a list of preconfigured PreFilter Plugins
+2. Once the pod passes all the checks by the PreFilter Plugins, the pod will be sent to the Filter Stage
 
 ### 3. FILTER Stage
-**[STEP 1]**
-<br>
-Send the pod through a list of preconfigured Filter Plugins
-<br>
 
-**[STEP 2]**
-<br>
-Once the pod passes all the checks by the Filter Plugins, the pod will be sent to the PreScore Stage
-<br>
+1. Send the pod through a list of preconfigured Filter Plugins
+2. Once the pod passes all the checks by the Filter Plugins, the pod will be sent to the PreScore Stage
 
 ### 4. PRE SCORE Stage
-**[STEP 1]**
-<br>
-Send the pod through a list of preconfigured PreScore Plugins
-<br>
-
-**[STEP 2]**
-<br>
-Once all the PreScore plugins intitnlizes the required variables for use on the next stage, the pod will be sent to the Score Stage
-<br>
+1. Send the pod through a list of preconfigured PreScore Plugins
+2. Once all the PreScore plugins intitnlizes the required variables for use on the next stage, the pod will be sent to the Score Stage
 
 ### 5. SCORE Stage
-**[STEP 1]**
-<br>
-Send the pod through a list of preconfigured Score Plugins
-<br>
 
-**[STEP 2]**
-<br>
-Once all the Score plugins return the  score value, the pod will be sent to the Score Stage
-<br>
+1. Send the pod through a list of preconfigured Score Plugins
+2. Once all the Score plugins return the  score value, the pod will be sent to the Score Stage
 
 ### 6. BIND Stage
-**[STEP 1]**
-<br>
-During the stage the scheduler will commit the changes to the cluster and ends the scheduling lifecycle. Only during this stage the pod is considered to be deployed.
-<br>
+1. During the stage the scheduler will commit the changes to the cluster and ends the scheduling lifecycle. Only during this stage the pod is considered to be deployed.
 
 ---
 
