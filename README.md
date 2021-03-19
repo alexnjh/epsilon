@@ -1,4 +1,4 @@
-![title](https://alexneo.net/cover.png "Epsilon")
+![title](https://alexneo.net/epsilon/cover.png "Epsilon")
 ## Epsilon, A Cluster Scheduler for Kubernetes Clusters
 
 ### :red_circle: DISCLAIMER
