@@ -143,9 +143,15 @@ Before deploying the retry.yaml file, please configure the environment variables
 ### :grey_exclamation: Common questions
 
 <dl>
-  <dt>How to change the retry algorithm?</dt>
-  <dd>The function WaitAndSend() in line 176 of main.go, contains the implementation of the retry algorithm. By modifiying this function the retry algorithm can be modified.</dd>
+  <dt>Changing the list of plugins used by the scheduler</dt>
+  <dd>Modification of plugin details can be achieved by editing the /framework/v1alpha1/framework.go file under the NewFramework() function</dd>
 
+  <dt>Change plugin's weight</dt>
+  <dd>Same as changing the list of plugins used by the scheduler shown above</dd>
+  
+  <dt>Change scheduling lifecycle</dt>
+  <dd>Modification of the scheduling lifecycle can be achieved by editing the /scheduler/scheduler.go file under the Schedule() function</dd>
+  
 </dl>
 
 <br>
