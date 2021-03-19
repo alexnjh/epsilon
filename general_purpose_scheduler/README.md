@@ -94,63 +94,46 @@ Before deploying the retry.yaml file, please configure the environment variables
 <a name="dir"/></a> 
 ### :grey_exclamation: Directory and File description
 
-<dl>
-  <dt>docker</dt>
-  <dd>contain the dockerfile for generating the scheduler service docker image</dd>
-  
-| File Name                 | Description                        |
-|--------------------------|-------------------------------------|
-| Dockerfile                | Use by docker to build the image   |
-| general_purpose_scheduler | Executable binary of the scheduler |
-  
-  <dt>framework</dt>
-  <dd>contains all the scheduling plugin implementations</dd>
-  
- | Path                     | File name                           | Description                                                      |
-|--------------------------|-------------------------------------|------------------------------------------------------------------|
-| plugins                  | registry.go                         | Implementation code of the plugin registry                       |
-| plugins/imagelocality    | image_locality.go                   | Implementation code of the image locality plugin                 |
-| plugins/interpodaffinity | filtering.go, plugin.go, scoring.go | Implementation code of the inter pod affinity plugin             |
-| plugins/nodeaffinity     | node_affinity.go                    | Implementation code of the inter pod affinity score stage plugin |
-| plugins/nodename         | node_name.go                        |                                                                  |
-|                          |                                     |                                                                  | 
-
-  <dt>internal</dt>
-  <dd>contains the cache implementaion used by the default kubernetes scheduler (Kube-Scheduler)</dd>
-
-  <dt>yaml</dt>
-  <dd>contains the deployment yaml file</dd>
-  
-  <dt>k8s.io/kubernetes/pkg</dt>
-  <dd>contains Kubernetes libary files</dd>
-  
-  <dt>scheduler</dt>
-  <dd>contains the implementation of the scheduler service</dd>
-  
-</dl>
-
-<br>
-
----
-
-<br>
-
-<a name="file"/></a> 
-### :grey_exclamation: Key files to take note
-
-<dl>
-  <dt>main.go</dt>
-  <dd>contain the main routine. All initialization of required variables including the waiting for new pods that failed is in this file</dd>
-
-</dl>
-
-<dl>
-  <dt>helper.go</dt>
-  <dd>contains helper functions used by the main routine</dd>
-
-</dl>
-
-<br>
+| Directory name                        | File name              | Description                                                                                                                   |
+|---------------------------------------|------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| /                                     | main.go                | Implementation code of the main routine                                                                                       |
+| /                                     | processes.go           | Implementation code of the processes used by the scheduler during operation                                                   |
+| /                                     | helper.go              | Implementation code containing common functions used by the different processes                                               |
+| /                                     | experiment.go          | Used for experiments only. Does not affect the scheduler and can be removed                                                   |
+| /                                     | event_handlers.go      | Implementation code that updates the local state of the scheduler                                                             |
+| /framework/plugins                    | registry.go            | Implementation code of the plugin registry                                                                                    |
+| /framework/plugins/helper             | node_affinity.go       | Helper functions used by node affinity plugin                                                                                 |
+| /framework/plugins/helper             | taints.go              | Helper functions used by node affinity plugin                                                                                 |
+| /framework/plugins/helper             | normalize_score.go     | Implementation of normalizing different scores returned by the score plugins                                                  |
+| /framework/plugins/imagelocality      | image_locality.go      | Implementation code of the image locality plugin                                                                              |
+| /framework/plugins/interpodaffinity   | filtering.go           | Implementation code of the inter pod affinity plugin                                                                          |
+| /framework/plugins/interpodaffinity   | plugin.go              | Implementation code of the inter pod affinity plugin                                                                          |
+| /framework/plugins/interpodaffinity   | scoring.go             | Implementation code of the inter pod affinity plugin                                                                          |
+| /framework/plugins/nodeaffinity       | node_affinity.go       | Implementation code of the node affinity plugin                                                                               |
+| /framework/plugins/nodename           | node_name.go           | Implementation code of the node name plugin                                                                                   |
+| /framework/plugins/nodeports          | node_ports.go          | Implementation code of the node ports plugin                                                                                  |
+| /framework/plugins/noderesources      | fit.go                 | Implementation code of the node resources plugin                                                                              |
+| /framework/plugins/nodestatus         | node_status.go         | Implementation code of the node status plugin                                                                                 |
+| /framework/plugins/nodeunschedulable  | node_unschedulable.go  | Implementation code of the node unschedulable plugin                                                                          |
+| /framework/plugins/repeatpriority     | repeat_priority.go     | Implementation code of the repeat priority plugin                                                                             |
+| /framework/plugins/resourcepriority   | resource_priority.go   | Implementation code of the resource priority plugin                                                                           |
+| /framework/plugins/tainttoleration    | taint_toleration.go    | Implementation code of the taints and tolerations plugin                                                                      |
+| /framework/plugins/volumebinding      | volume_binding.go      | Implementation code of the volume binding plugin                                                                              |
+| /framework/plugins/volumerestrictions | volume_restrictions.go | Implementation code of the volume restrictions plugin                                                                         |
+| /framework/v1alpha1                   | framework.go           | Contains scheduling framework implementation. Edit this file if changing plugin execution order or enabling/disabling plugins |
+| /framework/v1alpha1                   | interface.go           | Contains Interface of scheduling framework                                                                                    |
+| /framework/v1alpha1                   | registry.go            | Contains Interface of registry                                                                                                |
+| /framework/v1alpha1                   | listers.go             | Contains Interface of custom listers used by Kube-Scheduler                                                                   |
+| /internal/cache                       | cache.go               | Contains cache implementation of Kube-Scheduler, only modify this if you know what your doing                                 |
+| /internal/parallelize                 | parallelism.go         | Contains parallel execution implementation of Kube-Scheduler, only modify this if you know what your doing                    |
+| /k8s.io                               | *                      | This are Kube-Scheduler library files, only modify this if you know what your doing                                           |
+| /scheduler                            | helper.go              | Contain helper functions used by the scheduler implementation                                                                 |
+| /scheduler                            | scheduler.go           | Implementation of the Epsilon scheduling lifecycle                                                                            |
+| /scheduler                            | types.go               | Contain struct types used by the scheduler                                                                                    |
+| /scheduler/config                     | *                      | This are Kube-Scheduler library files, only modify this if you know what your doing                                           |
+| /scheduler/util                       | *                      | This are Kube-Scheduler library files, only modify this if you know what your doing                                           |
+| /scheduler/metrics                    | *                      | This are Kube-Scheduler library files, only modify this if you know what your doing                                           |
+| /yaml                                 | scheduler.yaml         | Deployment file to deploy the scheduler in a Kubernetes cluster                                                               |
 
 ---
 
