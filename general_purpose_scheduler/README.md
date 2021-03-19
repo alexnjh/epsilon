@@ -97,8 +97,9 @@ Before deploying the retry.yaml file, please configure the environment variables
 <dl>
   <dt>docker</dt>
   <dd>contain the dockerfile for generating the scheduler service docker image</dd>
+  
   | File Name                 | Description                        |
-  |---------------------------|------------------------------------|
+  |--------------------------|-------------------------------------|
   | Dockerfile                | Use by docker to build the image   |
   | general_purpose_scheduler | Executable binary of the scheduler |
   
