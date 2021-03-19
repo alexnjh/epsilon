@@ -154,9 +154,14 @@ Before deploying the retry.yaml file, please configure the environment variables
   <dd>Modification of the scheduling lifecycle can be achieved by editing the /scheduler/scheduler.go file under the Schedule() function</dd>
   
   <dt>Adding a new scheduler plugin</dt>
-  <dd>In order to add a new scheduler plugin, follow the steps shown below</dd>
+  <dd>
+  
+  In order to add a new scheduler plugin, follow the steps shown below
+  
       1. Create a new folder in /framework/plugins
       2. 
+
+  </dd>
   
 </dl>
 
