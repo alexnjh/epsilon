@@ -143,6 +143,7 @@ Before deploying the retry.yaml file, please configure the environment variables
 ### :grey_exclamation: Common questions
 
 <dl>
+  
   <dt>Changing the list of plugins used by the scheduler</dt>
   <dd>Modification of plugin details can be achieved by editing the /framework/v1alpha1/framework.go file under the NewFramework() function</dd>
 
@@ -151,6 +152,11 @@ Before deploying the retry.yaml file, please configure the environment variables
   
   <dt>Change scheduling lifecycle</dt>
   <dd>Modification of the scheduling lifecycle can be achieved by editing the /scheduler/scheduler.go file under the Schedule() function</dd>
+  
+  <dt>Adding a new scheduler plugin</dt>
+  <dd>In order to add a new scheduler plugin, follow the steps shown below</dd>
+      1. Create a new folder in /framework/plugins
+      2. 
   
 </dl>
 
