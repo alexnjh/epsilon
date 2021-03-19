@@ -55,7 +55,7 @@ Before deploying the scheduler.yaml file, please configure the environment varia
 <br>
 
 <a name="work"/></a> 
-### :grey_exclamation: The General Purpose Scheduler algorithm
+### :grey_exclamation: The General Purpose Scheduler Lifecycle
 
 ![schedLifecycle](https://alexneo.net/epsilon/sched_lifecycle.JPG "scedLifecycle")
 
