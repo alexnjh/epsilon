@@ -98,13 +98,22 @@ Before deploying the retry.yaml file, please configure the environment variables
   <dt>docker</dt>
   <dd>contain the dockerfile for generating the scheduler service docker image</dd>
   
-  | File Name                 | Description                        |
-  |--------------------------|-------------------------------------|
-  | Dockerfile                | Use by docker to build the image   |
-  | general_purpose_scheduler | Executable binary of the scheduler |
+| File Name                 | Description                        |
+|--------------------------|-------------------------------------|
+| Dockerfile                | Use by docker to build the image   |
+| general_purpose_scheduler | Executable binary of the scheduler |
   
   <dt>framework</dt>
   <dd>contains all the scheduling plugin implementations</dd>
+  
+ | Path                     | File name                           | Description                                                      |
+|--------------------------|-------------------------------------|------------------------------------------------------------------|
+| plugins                  | registry.go                         | Implementation code of the plugin registry                       |
+| plugins/imagelocality    | image_locality.go                   | Implementation code of the image locality plugin                 |
+| plugins/interpodaffinity | filtering.go, plugin.go, scoring.go | Implementation code of the inter pod affinity plugin             |
+| plugins/nodeaffinity     | node_affinity.go                    | Implementation code of the inter pod affinity score stage plugin |
+| plugins/nodename         | node_name.go                        |                                                                  |
+|                          |                                     |                                                                  | 
 
   <dt>internal</dt>
   <dd>contains the cache implementaion used by the default kubernetes scheduler (Kube-Scheduler)</dd>
