@@ -144,24 +144,24 @@ Before deploying the scheduler.yaml file, please configure the environment varia
 <dl>
   
   <dt>Changing the list of plugins used by the scheduler</dt>
-  <dd>Modification of plugin details can be achieved by editing the **/framework/v1alpha1/framework.go** file under the **NewFramework()** function</dd>
+  <dd>Modification of plugin details can be achieved by editing the <b>/framework/v1alpha1/framework.go</b> file under the <b>NewFramework()</b> function</dd>
 
   <dt>Change a scheduler plugin's weight</dt>
   <dd>Same as changing the list of plugins used by the scheduler shown above</dd>
   
   <dt>Change scheduling lifecycle</dt>
-  <dd>Modification of the scheduling lifecycle can be achieved by editing the **/scheduler/scheduler.go** file under the **Schedule()** function</dd>
+  <dd>Modification of the scheduling lifecycle can be achieved by editing the <b>/scheduler/scheduler.go</b> file under the <b>Schedule()</b> function</dd>
   
   <dt>Adding a new scheduler plugin</dt>
   <dd>
   
   In order to add a new scheduler plugin, follow the steps shown below
   
-      1. Create a new folder in **/framework/plugins**
+      1. Create a new folder in /framework/plugins
       2. Write the plugin implementation and store the file in the new folder created in 1
-      3. Open **/framework/plugins/registry.go** and import the new folder that was created in 2
-      4. Initilize the newly added plugin by calling its New function inside the **NewInTreeRegistry()** function
-      5. Open **/framework/v1alpha1/framework.go** and add the plugin into the correct plugin list. 
+      3. Open /framework/plugins/registry.go and import the new folder that was created in 2
+      4. Initilize the newly added plugin by calling its New function inside the NewInTreeRegistry() function
+      5. Open /framework/v1alpha1/framework.go and add the plugin into the correct plugin list. 
          Each list is for a different stage, make sure to add the new plugin to the correct list
 
   </dd>
