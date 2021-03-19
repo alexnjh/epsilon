@@ -92,20 +92,30 @@ Before deploying the retry.yaml file, please configure the environment variables
 
 
 <a name="dir"/></a> 
-### :grey_exclamation: Directory Description
+### :grey_exclamation: Directory and File description
 
 <dl>
   <dt>docker</dt>
-  <dd>contain the dockerfile for generating the retry service docker image</dd>
+  <dd>contain the dockerfile for generating the scheduler service docker image</dd>
+  | File Name                 | Description                        |
+  |---------------------------|------------------------------------|
+  | Dockerfile                | Use by docker to build the image   |
+  | general_purpose_scheduler | Executable binary of the scheduler |
   
   <dt>framework</dt>
-  <dd>contains all the scheduling plugins implementations</dd>
+  <dd>contains all the scheduling plugin implementations</dd>
 
   <dt>internal</dt>
   <dd>contains the cache implementaion used by the default kubernetes scheduler (Kube-Scheduler)</dd>
 
   <dt>yaml</dt>
-  <dd>contain the deployment yaml file</dd>
+  <dd>contains the deployment yaml file</dd>
+  
+  <dt>k8s.io/kubernetes/pkg</dt>
+  <dd>contains Kubernetes libary files</dd>
+  
+  <dt>scheduler</dt>
+  <dd>contains the implementation of the scheduler service</dd>
   
 </dl>
 
