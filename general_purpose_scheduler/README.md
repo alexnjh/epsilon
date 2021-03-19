@@ -162,7 +162,8 @@ Before deploying the retry.yaml file, please configure the environment variables
       2. Write the plugin implementation and store the file in the new folder created in 1
       3. Open /framework/plugins/registry.go and import the new folder that was created in 2
       4. Intilize the newly added plugin by calling its New function inside the NewInTreeRegistry() function
-      5. Open /framework/v1alpha1/framework.go and add the plugin into the correct plugin list. Each list is for a different stage, make sure to add the new plugin to the correct list
+      5. Open /framework/v1alpha1/framework.go and add the plugin into the correct plugin list. 
+         Each list is for a different stage, make sure to add the new plugin to the correct list
 
   </dd>
   
