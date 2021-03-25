@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: experiment
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: experiment-role
+rules:
+- apiGroups:
+    - "batch"
+  resources:
+    - "jobs"
+  verbs:
+    - "create"
+    - "delete"
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: experiment-role-binding
+subjects:
+- kind: ServiceAccount
+  name: experiment
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: experiment-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: experiment-agent
+  namespace: default
+  labels:
+    app: experiment-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: experiment-agent
+  template:
+    metadata:
+      labels:
+        app: experiment-agent
+    spec:
+      affinity:
+        nodeAffinity:
+      schedulerName: custom
+      serviceAccountName: experiment
+      containers:
+      - name: experiment-agent
+        image: alexnjh/poisson_arrival_agent:0.0.1
+        imagePullPolicy: Always
+        env:
+        - name: QUEUE
+          value: "epsilon.distributed"
+        - name: ARRIVAL_RATE
+          value: "200"
+        - name: MIN_PERIOD
+          value: "900"
+        - name: MAX_PERIOD
+          value: "1800"
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: short-job-experiment-agent
+  namespace: default
+  labels:
+    app: short-job-experiment-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: short-job-experiment-agent
+  template:
+    metadata:
+      labels:
+        app: short-job-experiment-agent
+    spec:
+      affinity:
+        nodeAffinity:
+      schedulerName: custom
+      serviceAccountName: experiment
+      containers:
+      - name: short-job-experiment-agent
+        image: alexnjh/poisson_arrival_agent:0.0.1
+        imagePullPolicy: Always
+        env:
+        - name: QUEUE
+          value: "epsilon.distributed"
+        - name: ARRIVAL_RATE
+          value: "200"
+        - name: MIN_PERIOD
+          value: "1"
+        - name: MAX_PERIOD
+          value: "180"

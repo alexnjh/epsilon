@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sched-retry
+  namespace: custom-scheduler
+  labels:
+    app: sched-retry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sched-retry
+  template:
+    metadata:
+      labels:
+        app: sched-retry
+    spec:
+      containers:
+      - name: sched-retry
+        image: alexnjh/epsilon_retry_service:0.0.2
+        imagePullPolicy: Always
+        env:
+        - name: MQ_HOST
+          value: "sched-rabbitmq-0.sched-rabbitmq.custom-scheduler.svc.cluster.local"
+        - name: MQ_PORT
+          value: "5672"
+        - name: MQ_USER
+          value: "guest"
+        - name: MQ_PASS
+          value: "guest"
+        - name: RECEIVE_QUEUE
+          value: "epsilon.backoff"
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        # resources:
+        #   limits:
+        #     memory: "50M"
+        #   requests:
+        #     memory: "10M"
+        ports:

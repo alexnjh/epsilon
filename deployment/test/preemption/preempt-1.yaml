@@ -1,0 +1,46 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: low-priority
+value: 100
+globalDefault: false
+description: "This priority class should be used for low priority service pods only."
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+        epsilon.queue: epsilon.distributed
+    spec:
+      priorityClassName: low-priority
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - k8s-worker1
+      schedulerName: custom
+      containers:
+      - name: nginx
+        image: nginx:1.19
+        resources:
+          requests:
+            memory: "1.9Gi"
+        ports:
+        - containerPort: 80

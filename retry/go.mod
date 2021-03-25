@@ -3,7 +3,7 @@ module github.com/alexnjh/epsilon/retry
 go 1.14
 
 require (
-	github.com/alexnjh/epsilon/communication v0.0.0-20210307073205-eac2c486448f
+	github.com/alexnjh/epsilon/communication v0.0.0-20210325152251-2532cd9a7283
 	github.com/bigkevmcd/go-configparser v0.0.0-20200217161103-d137835d2579
 	github.com/json-iterator/go v1.1.10
 	github.com/sirupsen/logrus v1.7.0

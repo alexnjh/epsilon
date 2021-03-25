@@ -4,8 +4,11 @@ github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb0
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
 github.com/alexnjh/epsilon v0.0.3 h1:cZxXSqnP2ZhyoC2428QvNfxNiZVKYRvNM26+wbaVd7E=
+github.com/alexnjh/epsilon v0.0.10 h1:ox48WtchjP4VyMXxAXp6g9sAj2NCLwEihLqvxa4v/LI=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129144732-7549bb8cdae5 h1:sWLp8rq60TNeLnjru5Q+NEUZkwV/AjWz8Ivo/KrmcrQ=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129144732-7549bb8cdae5/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
+github.com/alexnjh/epsilon/communication v0.0.0-20210325152251-2532cd9a7283 h1:SKAIbFc8dMQL17vX/MdS8iYz5WYOFsPOx8wEkPmB7l4=
+github.com/alexnjh/epsilon/communication v0.0.0-20210325152251-2532cd9a7283/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a/go.mod h1:lB+ZfQJz7igIIfQNfa7Ml4HSf2uFQQRzpGGRXenZAgY=
 github.com/bigkevmcd/go-configparser v0.0.0-20200217161103-d137835d2579 h1:4UwtVL/bvcpWHPAUCtu8hKl7belqWxDEw94wkYFWem8=
 github.com/bigkevmcd/go-configparser v0.0.0-20200217161103-d137835d2579/go.mod h1:RI5D4DqbDX0Kb0SvKTuAKMYlkSBND3zLQZI/wiS5Ij0=

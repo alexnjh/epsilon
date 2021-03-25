@@ -21,12 +21,15 @@ github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuy
 github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
 github.com/alexnjh/epsilon v0.0.2 h1:ESY4rCd3N7KTOGasTrQ/G8ObIC5WUa9szoFLUjM06cs=
 github.com/alexnjh/epsilon v0.0.8 h1:RC2pCsyi/w/Ie+V3jimiQhfJv3Ni5DnXuYBpDvVFlb0=
+github.com/alexnjh/epsilon v0.0.10 h1:ox48WtchjP4VyMXxAXp6g9sAj2NCLwEihLqvxa4v/LI=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129103033-c81fe4affdf0 h1:7fCgzWlqhLgaL0fY7ZVqf1XYWIRBUukPOSvnlEIXuD4=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129103033-c81fe4affdf0/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129135438-abc23412f3ba h1:fnlWppU7vbfhBwMVJcXPyO2j8LfiloWF0Zymo+FPlYQ=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129135438-abc23412f3ba/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/alexnjh/epsilon/communication v0.0.0-20210307073205-eac2c486448f h1:LqCo1vjQHSWeEj/88jk+NEjNEua8MUn3DEKmPIwF5UQ=
 github.com/alexnjh/epsilon/communication v0.0.0-20210307073205-eac2c486448f/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
+github.com/alexnjh/epsilon/communication v0.0.0-20210325152251-2532cd9a7283 h1:SKAIbFc8dMQL17vX/MdS8iYz5WYOFsPOx8wEkPmB7l4=
+github.com/alexnjh/epsilon/communication v0.0.0-20210325152251-2532cd9a7283/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0 h1:HWo1m869IqiPhD389kmkxeTalrjNbbJTC8LXupb+sl0=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=

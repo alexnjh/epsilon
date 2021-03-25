@@ -3,7 +3,7 @@ module github.com/alexnjh/epsilon/experiment
 go 1.14
 
 require (
-	github.com/alexnjh/epsilon/communication v0.0.0-20210129144732-7549bb8cdae5
+	github.com/alexnjh/epsilon/communication v0.0.0-20210325152251-2532cd9a7283
 	github.com/bigkevmcd/go-configparser v0.0.0-20200217161103-d137835d2579
 	github.com/json-iterator/go v1.1.10
 	github.com/mattn/go-sqlite3 v1.14.5

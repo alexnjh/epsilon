@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: experiment-job
+  namespace: default
+  annotations:
+    creationTime: ""
+spec:
+  template:
+    spec:
+      schedulerName: custom
+      containers:
+      - name: sleep
+        image: alexnjh/sleep:0.0.8
+        env:
+        - name: MIN_PERIOD
+          value: "1"
+        - name: MAX_PERIOD
+          value: "300"
+      restartPolicy: Never
+  backoffLimit: 4

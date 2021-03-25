@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rabbitmq-pv-claim
+  namespace: custom-scheduler
+spec:
+  storageClassName: ceph-fs
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sched-rabbitmq
+  namespace: custom-scheduler
+  labels:
+    app: sched-rabbitmq
+spec:
+  ports:
+  - port: 5672
+    name: rabbitmq-port
+  - port: 15672
+    name: management-port
+  type: LoadBalancer
+  selector:
+    app: sched-rabbitmq
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sched-rabbitmq
+  namespace: custom-scheduler
+spec:
+  serviceName: "sched-rabbitmq"
+  selector:
+    matchLabels:
+      app: sched-rabbitmq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: sched-rabbitmq
+    spec:
+      containers:
+      - name: sched-rabbitmq
+        image: rabbitmq:3.8.5-management-alpine
+        ports:
+          - containerPort: 5672
+          - containerPort: 15672
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: guest
+        - name: RABBITMQ_DEFAULT_PASS
+          value: guest
+        ports:
+        resources:
+          requests:
+            memory: "512Mi"
+          limits:
+            memory: "2048Mi"
+        volumeMounts:
+          - name: pv-data
+            mountPath: /var/lib/rabbitmq
+      volumes:
+        - name: pv-data
+          persistentVolumeClaim:
+            claimName: rabbitmq-pv-claim

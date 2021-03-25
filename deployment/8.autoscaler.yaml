@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sched-autoscaler
+  namespace: custom-scheduler
+  labels:
+    app: sched-autoscaler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sched-autoscaler
+  template:
+    metadata:
+      labels:
+        app: sched-autoscaler
+    spec:
+      serviceAccountName: custom-scheduler
+      containers:
+      - name: sched-autoscaler
+        image: alexnjh/epsilon_autoscaler_service:0.0.2
+        imagePullPolicy: Always
+        env:
+        - name: PC_METRIC_URL
+          value: "pod-coordinator.custom-scheduler.svc.cluster.local:8080/metrics"
+        - name: MQ_HOST
+          value: "sched-rabbitmq-0.sched-rabbitmq.custom-scheduler.svc.cluster.local"
+        - name: MQ_MANAGE_PORT
+          value: "15672"
+        - name: MQ_USER
+          value: "guest"
+        - name: MQ_PASS
+          value: "guest"
+        - name: INTERVAL
+          value: "300"
+        - name: DEFAULT_QUEUE
+          value: "epsilon.distributed"
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        # resources:
+        #   limits:
+        #     memory: "50M"
+        #   requests:
+        #     memory: "10M"
+        ports:

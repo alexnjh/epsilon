@@ -271,7 +271,7 @@ func ScheduleProcess(
         log.Errorf("%s", err)
 
         // Check scheduling request last back off time and check if it exceeds the maximum backoff time
-        if (req.LastBackOffTime >= maxBackOff){
+        if (req.NextBackOffTime >= maxBackOff){
 
           go AddPodEvent(client,obj,fmt.Sprintf("Scheduler will not retry scheduling; Reason: %s",err.Error()),"Fatal")
 
@@ -282,7 +282,7 @@ func ScheduleProcess(
         }else{
 
           // If backoff time not exceeded, multiply the last backoff time by 2 and send it to backoff queue
-          req.LastBackOffTime = req.LastBackOffTime*2
+          req.NextBackOffTime = req.NextBackOffTime*2
           req.Message = err.Error()
 
           respBytes, err := json.Marshal(communication.RetryRequest{req,receiveQueue})
@@ -290,7 +290,7 @@ func ScheduleProcess(
             log.Fatalf("%s", err)
           }
 
-          go AddPodEvent(client,obj,fmt.Sprintf("Scheduler will retry in %d seconds; Reason: %s",req.LastBackOffTime,req.Message),"Warning")
+          go AddPodEvent(client,obj,fmt.Sprintf("Scheduler will retry in %d seconds; Reason: %s",req.NextBackOffTime,req.Message),"Warning")
 
           // Attempt to send message to retry service
           go SendToQueue(comm,respBytes,backoffQueue)
