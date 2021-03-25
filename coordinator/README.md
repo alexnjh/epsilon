@@ -8,8 +8,7 @@
   - [Description](#desc)
   - [Deployment](#deploy)
   - [How does the coordinator work?](#algo)
-  - [Directory description](#dir)
-  - [File description](#file)
+  - [Directory and File description](#dir)
   - [Common questions](#qna)
 
 
@@ -84,38 +83,16 @@ The **handle.go** file contains the pod handling algorithm and all the coodinato
 <br>
 
 <a name="dir"/></a> 
-### :grey_exclamation: Directory Description
+### :grey_exclamation: Directory and File Description
 
-<dl>
-  <dt>docker</dt>
-  <dd>contain the dockerfile for generating the coordinator docker image</dd>
-  
-  <dt>yaml</dt>
-  <dd>contain the deployment yaml file</dd>
-  
-  <dt>helper</dt>
-  <dd>contain helper functions used by the coordinator</dd>
-</dl>
-
-<br>
-
----
-
-<br>
-
-<a name="file"/></a> 
-### :grey_exclamation: File Description
-
-<dl>
-  <dt>main.go</dt>
-  <dd>contain the main routine. All initialization of required variables is done in this file including the checking if a pod is configured to be scheduled by the epsilon scheduler</dd>
-  
-  <dt>controller.go</dt>
-  <dd>contains all the functions related to the workqueue. This file does not implement any of the coordinator algorithm. The controller just manages the workqueue</dd>
-  
-  <dt>handler.go</dt>
-  <dd>contain the implementation of the coordinator algorithm and also sends the pod to the queue service</dd>
-</dl>
+| Directory Name  | File name        | Description                                                                                                           |
+|-----------------|------------------|-----------------------------------------------------------------------------------------------------------------------|
+| /               | main.go          | Implementation code of the main routine                                                                               |
+| /               | controller.go    | Implementation code containing a queue implementation for buffering pods that are created and waiting to be scheduled |
+| /               | handler.go       | Contains the implementation coordinator logic and how it select which scheduler to send the pod to                    |
+| /helper         | helper.go        | Contain helper methods use by the main routine                                                                        |
+| /docker         | Dockerfile       | Used by docker to create a docker image                                                                               |
+| /yaml           | coordinator.yaml | Deployment file to deploy the scheduler in a Kubernetes cluster                                                       |
 
 <br>
 
