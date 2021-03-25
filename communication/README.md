@@ -1,5 +1,5 @@
 ![title](https://alexneo.net/epsilon/communication.png "comms")
-## Retry Microservice
+## Communication Library
 
 ---
 
@@ -17,7 +17,7 @@
 <a name="desc"/></a> 
 ### :grey_exclamation: Description
 
-The Retry service's goal is to reschedule pods that failed
+Common communciation libarary used by all microservices in Epsilon. This libary contains message formats used by the different microservices and the communication handler implementaion for a microservice to communicate with the queue service. All communications in epsilon should be via the queue service.
 
 <br>
 
@@ -27,23 +27,19 @@ The Retry service's goal is to reschedule pods that failed
 <br>
 
 <a name="deploy"/></a> 
-### :grey_exclamation: Deployment of the retry service
+### :grey_exclamation: Using the communication libary
 
-Before deploying the retry.yaml file, please configure the environment variables to the correct values used by the queue microservice.
+The libarary can be imported by adding the link in the import section of the code
 
-    env:
-    - name: MQ_HOST
-      value: "sched-rabbitmq-0.sched-rabbitmq.custom-scheduler.svc.cluster.local"
-    - name: MQ_PORT
-      value: "5672"
-    - name: MQ_USER
-      value: "guest"
-    - name: MQ_PASS
-      value: "guest"
-    - name: RECEIVE_QUEUE
-      value: "epsilon.backoff"
+    import(
+      communication "github.com/alexnjh/epsilon/communication"
+    )
 
-<br>
+To connect to the queue service (The queue microservice should be running and accessible)
+
+    import(
+      communication "github.com/alexnjh/epsilon/communication"
+    )
 
 ---
 
