@@ -35,11 +35,33 @@ The libarary can be imported by adding the link in the import section of the cod
       communication "github.com/alexnjh/epsilon/communication"
     )
 
-To connect to the queue service (The queue microservice should be running and accessible)
+To connect to the queue service (The queue microservice should be running and accessible).
+<br>
+**mqUser** is the username of the user that the microservice will be using to authenticate with the queue microservice.
+<br>
+**mqPass** is the password of the user that the microservice will be using to authenticate with the queue microservice.
+<br>
+**mqHost** is the hostname of the queue microservice
+<br>
+**mqPort** is the port that the queue microservice is listening on.
+<br>
 
-    import(
-      communication "github.com/alexnjh/epsilon/communication"
-    )
+    comm, err := communication.NewCommunicationClient(fmt.Sprintf("amqp://%s:%s@%s:%s/",mqUser, mqPass, mqHost, mqPort))
+    if err != nil {
+      log.Fatalf(err.Error())
+    }
+
+A queue can be created by sending the queue name through the QueueDeclare function
+
+**queueName** is the username of the user that the microservice will be using to authenticate with the queue microservice.
+<br>
+
+    err = comm.QueueDeclare(queueName)
+    if err != nil {
+      log.Fatalf(err.Error())
+    }
+
+
 
 ---
 
