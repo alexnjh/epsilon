@@ -133,6 +133,7 @@ Before deploying the scheduler.yaml file, please configure the environment varia
 | /scheduler/util                       | *                      | This are Kube-Scheduler library files, only modify this if you know what your doing                                           |
 | /scheduler/metrics                    | *                      | This are Kube-Scheduler library files, only modify this if you know what your doing                                           |
 | /yaml                                 | scheduler.yaml         | Deployment file to deploy the scheduler in a Kubernetes cluster                                                               |
+| /docker                                 | Dockerfile        | Used by docker to create a docker image                                                               |
 
 ---
 
