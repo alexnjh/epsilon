@@ -39,9 +39,8 @@ Common communciation libarary used by all microservices in Epsilon. This libary 
 
 
 <dl>
-  <dt>2. The library can be imported by adding the link in the import section of the code.</dt>
+  <dt>2. Connecting to the queue service (The queue microservice should be running and accessible).</dt>
   <br>
-  <dd>To connect to the queue service (The queue microservice should be running and accessible).<dd>
   <dd><b>mqUser</b> is the username of the user that the microservice will be using to authenticate with the queue microservice.<dd>
   <dd><b>mqPass</b> is the password of the user that the microservice will be using to authenticate with the queue microservice.<dd>
   <dd><b>mqHost</b> is the hostname of the queue microservice.<dd>
@@ -115,8 +114,8 @@ Common communciation libarary used by all microservices in Epsilon. This libary 
 ### :grey_exclamation: Common questions
 
 <dl>
-  <dt>How to change the retry algorithm?</dt>
-  <dd>The function WaitAndSend() in line 176 of main.go, contains the implementation of the retry algorithm. By modifiying this function the retry algorithm can be modified.</dd>
+  <dt></dt>
+  <dd></dd>
 
 </dl>
 
