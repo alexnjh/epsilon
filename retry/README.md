@@ -74,37 +74,14 @@ Once the backoff duration had past, the retry service will send the failed pod b
 <br>
 
 <a name="dir"/></a> 
-### :grey_exclamation: Directory Description
+### :grey_exclamation: Directory and File Description
 
-<dl>
-  <dt>docker</dt>
-  <dd>contain the dockerfile for generating the retry service docker image</dd>
-  
-  <dt>yaml</dt>
-  <dd>contain the deployment yaml file</dd>
-  
-</dl>
-
-<br>
-
----
-
-<br>
-
-<a name="file"/></a> 
-### :grey_exclamation: File Description
-
-<dl>
-  <dt>main.go</dt>
-  <dd>contain the main routine. All initialization of required variables including the waiting for new pods that failed is in this file</dd>
-
-</dl>
-
-<dl>
-  <dt>helper.go</dt>
-  <dd>contains helper functions used by the main routine</dd>
-
-</dl>
+| Directory Name  | File name  | Description                                                     |
+|-----------------|------------|-----------------------------------------------------------------|
+| /               | main.go    | Implementation code of the main routine                         |
+| /helper         | helper.go  | Contain helper methods use by the main routine                  |
+| /docker         | Dockerfile | Used by docker to create a docker image                         |
+| /yaml           | retry.yaml | Deployment file to deploy the scheduler in a Kubernetes cluster |
 
 <br>
 
