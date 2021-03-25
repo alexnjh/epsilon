@@ -65,6 +65,7 @@ github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk5
 github.com/alexnjh/epsilon v0.0.1 h1:9gb2A+uErapfSlhBEHI4h3ZdCglmfgkrX7qXJCH6cBM=
 github.com/alexnjh/epsilon v0.0.2 h1:ESY4rCd3N7KTOGasTrQ/G8ObIC5WUa9szoFLUjM06cs=
 github.com/alexnjh/epsilon v0.0.2/go.mod h1:CfTGkU9n74HjZ+YW5hKYgMNDRvJ3IIlDJ1XTFM3wMTA=
+github.com/alexnjh/epsilon v0.0.8 h1:RC2pCsyi/w/Ie+V3jimiQhfJv3Ni5DnXuYBpDvVFlb0=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129103033-c81fe4affdf0/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129113719-0f00beb417e0 h1:UrTF1ieNOsUMJgHoxmW6+VsSp1uUAFGXm/hfW8juAFU=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129113719-0f00beb417e0/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
@@ -74,6 +75,8 @@ github.com/alexnjh/epsilon/communication v0.0.0-20210129135022-258b4f78a52c h1:d
 github.com/alexnjh/epsilon/communication v0.0.0-20210129135022-258b4f78a52c/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129135438-abc23412f3ba h1:fnlWppU7vbfhBwMVJcXPyO2j8LfiloWF0Zymo+FPlYQ=
 github.com/alexnjh/epsilon/communication v0.0.0-20210129135438-abc23412f3ba/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
+github.com/alexnjh/epsilon/communication v0.0.0-20210307073205-eac2c486448f h1:LqCo1vjQHSWeEj/88jk+NEjNEua8MUn3DEKmPIwF5UQ=
+github.com/alexnjh/epsilon/communication v0.0.0-20210307073205-eac2c486448f/go.mod h1:g73IOuM2cg+4hvsdNJsHbhY5G2PYCdD+szduuyDOi9c=
 github.com/alexnjh/epsilon/experiment v0.0.0-20210129113719-0f00beb417e0 h1:VgUslZCXbAoCatwGjnXKO+IAj6XKuMKyWwva2frvVBY=
 github.com/alexnjh/epsilon/experiment v0.0.0-20210129113719-0f00beb417e0/go.mod h1:DLOccSJUK5Br1bC0cG+QAtW+xM4HcYKC7Z65ELnWi8Q=
 github.com/alexnjh/epsilon/experiment v0.0.0-20210129132005-9871efbddb56 h1:DkWVnaDZpj1ONa5FgHTNQ8MlqnKRRgShZSfk6ZpjKhU=
@@ -721,6 +724,7 @@ google.golang.org/appengine v1.2.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7
 google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
 google.golang.org/appengine v1.5.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7/EB5XEv4=
 google.golang.org/appengine v1.6.1/go.mod h1:i06prIuMbXzDqacNJfV5OdTW448YApPu5ww/cMBSeb0=
+google.golang.org/appengine v1.6.5 h1:tycE03LOZYQNhDpS27tcQdAzLCVMaj7QT2SXxebnpCM=
 google.golang.org/appengine v1.6.5/go.mod h1:8WjMMxjGQR8xUklV/ARdw2HLXBOI7O7uCIDZVag1xfc=
 google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8/go.mod h1:JiN7NxoALGmiZfu7CAH4rXhgtRTLTxftemlI0sWmxmc=
 google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19/go.mod h1:VzzqZJRnGkLBvHegQrXjBqPurQTc5/KpmUdxsrq26oE=

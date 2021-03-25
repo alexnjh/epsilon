@@ -90,7 +90,7 @@ func ScheduleProcess(
         log.Errorf("%s", err)
 
         // Check scheduling request last back off time and check if it exceeds the maximum backoff time
-        if (req.NextBackOffTime >= maxBackOff){
+        if (req.NextBackOffTime > maxBackOff){
 
           go AddPodEvent(client,obj,fmt.Sprintf("Scheduler will not retry scheduling; Reason: %s",err.Error()),"Fatal")
 

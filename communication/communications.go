@@ -23,15 +23,15 @@ import (
  "github.com/streadway/amqp"
 )
 
-type RabbitMQCommunication struct{
+type CommunicationClient struct{
   host string
   conn *amqp.Connection
   ch *amqp.Channel
 }
 
-func NewRabbitMQCommunication(host string) (RabbitMQCommunication, error){
+func NewCommunicationClient(host string) (CommunicationClient, error){
 
- var comms = RabbitMQCommunication{host,nil,nil}
+ var comms = CommunicationClient{host,nil,nil}
 
  err := comms.Connect()
  if(err!=nil){
@@ -41,7 +41,7 @@ func NewRabbitMQCommunication(host string) (RabbitMQCommunication, error){
  return comms,nil
 }
 
-func (c *RabbitMQCommunication) QueueDeclare(queue string) error{
+func (c *CommunicationClient) QueueDeclare(queue string) error{
 
  _, err := c.ch.QueueDeclare(
    queue, // name
@@ -62,7 +62,7 @@ func (c *RabbitMQCommunication) QueueDeclare(queue string) error{
 }
 
 // Send schedule request to the schedulers
-func (c *RabbitMQCommunication) Send(message []byte, queue string) error{
+func (c *CommunicationClient) Send(message []byte, queue string) error{
 
  err := c.ch.Publish(
   "",     // exchange
@@ -84,7 +84,7 @@ func (c *RabbitMQCommunication) Send(message []byte, queue string) error{
 }
 
 // Send schedule request to the schedulers
-func (c *RabbitMQCommunication) Receive(queue string) (<-chan amqp.Delivery, error){
+func (c *CommunicationClient) Receive(queue string) (<-chan amqp.Delivery, error){
 
   msgs, err := c.ch.Consume(
    queue,   // queue
@@ -106,7 +106,7 @@ if err != nil{
 return msgs,nil
 }
 
-func (c *RabbitMQCommunication) Connect() error{
+func (c *CommunicationClient) Connect() error{
 
  if c.conn != nil{
    if c.conn.IsClosed() {

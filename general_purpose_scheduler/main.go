@@ -153,7 +153,7 @@ func main() {
 	)
 
   // Connect to RabbitMQ Server
-  comm, err := communication.NewRabbitMQCommunication(fmt.Sprintf("amqp://%s:%s@%s:%s/",mqUser, mqPass, mqHost, mqPort))
+  comm, err := communication.NewCommunicationClient(fmt.Sprintf("amqp://%s:%s@%s:%s/",mqUser, mqPass, mqHost, mqPort))
   if err != nil {
     log.Fatalf(err.Error())
   }
