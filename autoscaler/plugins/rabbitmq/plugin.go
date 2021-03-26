@@ -1,6 +1,8 @@
 package rabbitmq
 
 import(
+  "github.com/alexnjh/epsilon/autoscaler/interfaces"
+  log "github.com/sirupsen/logrus"
   rabbithole "github.com/michaelklishin/rabbit-hole/v2"
 )
 
@@ -25,7 +27,7 @@ func NewRabbitMQPlugin(name,vhost,queueName string,threshold float64,client *rab
 }
 
 // Compute processes the data and return a ComputeResult
-func (plugin *RabbitMQPlugin) Compute(_,_,_ float64) ComputeResult{
+func (plugin *RabbitMQPlugin) Compute(_,_,_ float64) interfaces.ComputeResult{
 
       qs, err := plugin.client.GetQueue(plugin.Vhost,plugin.QueueName)
 
@@ -34,9 +36,9 @@ func (plugin *RabbitMQPlugin) Compute(_,_,_ float64) ComputeResult{
       }
 
       if qs.ConsumerUtilisation > plugin.threshold {
-        return ScaleUp
+        return interfaces.ScaleUp
       }else{
-        return DoNotScale
+        return interfaces.DoNotScale
       }
 
 }

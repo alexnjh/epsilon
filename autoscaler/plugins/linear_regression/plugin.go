@@ -1,6 +1,9 @@
 package linear_regression
 
 import(
+  "math"
+  log "github.com/sirupsen/logrus"
+  "github.com/alexnjh/epsilon/autoscaler/interfaces"
   regression "github.com/sajari/regression"
 )
 
@@ -33,7 +36,7 @@ func NewLinearRegressionPlugin(name,queueName string,threshold int) *LinearRegre
 }
 
 // Compute processes the data and return a ComputeResult
-func (plugin *LinearRegressionPlugin) Compute(noOfPendingPods, noOfNodes, noOfSched float64) ComputeResult{
+func (plugin *LinearRegressionPlugin) Compute(noOfPendingPods, noOfNodes, noOfSched float64) interfaces.ComputeResult{
 
   plugin.dataCount+=1
 
@@ -56,18 +59,18 @@ func (plugin *LinearRegressionPlugin) Compute(noOfPendingPods, noOfNodes, noOfSc
     if diff < 0 {
 
       if (math.Abs(diff)/noOfPendingPods) > 0.5 {
-        return ScaleUp
+        return interfaces.ScaleUp
       }
 
     }else{
 
       if (math.Abs(diff)/noOfPendingPods) > 0.5{
-        return ScaleDown
+        return interfaces.ScaleDown
       }
 
     }
 
   }
-  return DoNotScale
+  return interfaces.DoNotScale
 
 }

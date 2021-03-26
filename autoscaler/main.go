@@ -3,12 +3,8 @@ package main
 import (
   "os"
   "fmt"
-  "math"
   "time"
   "strconv"
-  "bufio"
-  "net/http"
-  "strings"
   "errors"
   "context"
   "k8s.io/client-go/kubernetes"
@@ -23,10 +19,11 @@ import (
   log "github.com/sirupsen/logrus"
   applisters "k8s.io/client-go/listers/apps/v1"
   configparser "github.com/bigkevmcd/go-configparser"
-  rabbitplugin "github.com/alexnjh/autoscaler/plugins/rabbitmq"
-  queueplugin "github.com/alexnjh/autoscaler/plugins/queue_theory"
-  linearplugin "github.com/alexnjh/autoscaler/plugins/linear_regression"
-  schedplugin "github.com/alexnjh/autoscaler/plugins/scheduler_prob"
+  rabbitplugin "github.com/alexnjh/epsilon/autoscaler/plugins/rabbitmq"
+  queueplugin "github.com/alexnjh/epsilon/autoscaler/plugins/queue_theory"
+  linearplugin "github.com/alexnjh/epsilon/autoscaler/plugins/linear_regression"
+  schedplugin "github.com/alexnjh/epsilon/autoscaler/plugins/scheduler_prob"
+  "github.com/alexnjh/epsilon/autoscaler/interfaces"
 )
 
 const (
@@ -156,7 +153,7 @@ func main() {
 
   // Initialize Plugins
 
-  pluginList := make(map[string]AutoScalerPlugin)
+  pluginList := make(map[string]interfaces.AutoScalerPlugin)
 
   qs, err := rmqc.ListQueues()
 
@@ -177,7 +174,7 @@ func main() {
     }
   }
 
-  temp := make([]ComputeResult,len(pluginList))
+  temp := make([]interfaces.ComputeResult,len(pluginList))
 
   for {
 
@@ -222,9 +219,9 @@ func main() {
 
 
 // Update the replica count of the scheduler services
-func UpdateDeployment(client kubernetes.Interface, lister applisters.DeploymentLister, namespace string, queueName string, decision ComputeResult){
+func UpdateDeployment(client kubernetes.Interface, lister applisters.DeploymentLister, namespace string, queueName string, decision interfaces.ComputeResult){
 
-  if decision == DoNotScale {
+  if decision == interfaces.DoNotScale {
     return
   }
 
@@ -252,9 +249,9 @@ func UpdateDeployment(client kubernetes.Interface, lister applisters.DeploymentL
 
     obj := deployment[0]
 
-    if decision == ScaleUp {
+    if decision == interfaces.ScaleUp {
       *obj.Spec.Replicas +=1
-    }else if decision == ScaleDown && *obj.Spec.Replicas > 1{
+    }else if decision == interfaces.ScaleDown && *obj.Spec.Replicas > 1{
       *obj.Spec.Replicas -=1
     }else{
       return nil
@@ -269,53 +266,25 @@ func UpdateDeployment(client kubernetes.Interface, lister applisters.DeploymentL
 
 }
 
-// Convert prometheus formatted metrics into a map
-func promToMap(url string) map[string]string{
-
-  metricMap := make(map[string]string)
-
-  resp, err := http.Get(url)
-  if err != nil {
-    log.Fatalf(err.Error())
-  }
-
-  scanner := bufio.NewScanner(resp.Body)
-  for scanner.Scan() {
-    if len(scanner.Text()) > 0{
-      if scanner.Text()[0] != '#'{
-        s := strings.Split(scanner.Text(), " ")
-        if (len(s) == 2){
-          metricMap[s[0]]=s[1]
-        }
-      }
-    }
-  }
-  if err := scanner.Err(); err != nil {
-    fmt.Fprintln(os.Stderr, "reading standard input:", err)
-  }
-
-  return metricMap
-}
-
 // Consolidate all the decisions made by the plugins and decide on the next course of action.
-func makeDecision(result []ComputeResult) ComputeResult{
-  count := make(map[ComputeResult]int)
+func makeDecision(result []interfaces.ComputeResult) interfaces.ComputeResult{
+  count := make(map[interfaces.ComputeResult]int)
 
   for _, r := range(result){
     count[r] +=1
   }
 
 
-  largest := ScaleUp
+  largest := interfaces.ScaleUp
 
-  if(count[ScaleUp] > count[ScaleDown]){
-    largest = ScaleUp
+  if(count[interfaces.ScaleUp] > count[interfaces.ScaleDown]){
+    largest = interfaces.ScaleUp
   }else{
-    largest = ScaleDown
+    largest = interfaces.ScaleDown
   }
 
-  if(count[ScaleUp] == count[ScaleDown]){
-    largest = DoNotScale
+  if(count[interfaces.ScaleUp] == count[interfaces.ScaleDown]){
+    largest = interfaces.DoNotScale
   }
 
   return largest
@@ -368,19 +337,4 @@ func addScaleUpEvent(client kubernetes.Interface, obj *appsv1.Deployment){
       GenerateName: obj.Name + "-",
     },
   },metav1.CreateOptions{})
-}
-
-// Calculate the scheduler conflict probability
-// N = No of schedulers
-// K = No of nodes
-func calProb(N,K float64) float64{
-  return Factorial(N)/(Factorial(N-K)*math.Pow(N,K))
-}
-
-func Factorial(n float64)(result float64) {
-	if (n > 0) {
-		result = n * Factorial(n-1)
-		return result
-	}
-	return 1
 }
