@@ -1,5 +1,5 @@
 ![title](https://alexneo.net/epsilon/autoscaler.png "Autoscaler")
-## Coordinator Microservice
+## Autoscaler Microservice
 
 ---
 
@@ -107,7 +107,10 @@ The autoscaler will not attempt to scale up or down the scheduler replicas if th
 
 <dl>
   <dt>How to add a new autoscaler plugin</dt>
-  <dd>The SchedulerName can be changed by changing the name to check in the if statement in main.go at line 193.</dd>
+  
+      1. Create a new folder in /plugins
+      2. Write the plugin implementation and store the file in the new folder created in 1
+      3. Open main.go and intialize the plugin. Intialization of plugins can be found at line 168. 
 
 </dl>
 
