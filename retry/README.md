@@ -53,6 +53,8 @@ Before deploying the retry.yaml file, please configure the environment variables
 <a name="work"/></a> 
 ### :grey_exclamation: Retry algorithm
 
+![retryAlgo](https://alexneo.net/epsilon/retry_plan.png "retryAlgo")
+
 **[STEP 1]**
 <br>
 The retry service monitors the queue for new pods that failed.
