@@ -84,14 +84,17 @@ The autoscaler will not attempt to scale up or down the scheduler replicas if th
 <a name="dir"/></a> 
 ### :grey_exclamation: Directory and File Description
 
-| Directory Name  | File name        | Description                                                                                                           |
-|-----------------|------------------|-----------------------------------------------------------------------------------------------------------------------|
-| /               | main.go          | Implementation code of the main routine                                                                               |
-| /               | controller.go    | Implementation code containing a queue implementation for buffering pods that are created and waiting to be scheduled |
-| /               | handler.go       | Contains the implementation coordinator logic and how it select which scheduler to send the pod to                    |
-| /helper         | helper.go        | Contain helper methods use by the main routine                                                                        |
-| /docker         | Dockerfile       | Used by docker to create a docker image                                                                               |
-| /yaml           | coordinator.yaml | Deployment file to deploy the scheduler in a Kubernetes cluster                                                       |
+| Directory Name             | File name       | Description                                                       |
+|----------------------------|-----------------|-------------------------------------------------------------------|
+| /                          | main.go         | Implementation code of the main routine                           |
+| /                          | helper.go       | Contain helper methods use by the main routine                    |
+| /interfaces                | interface.go    | Contains the auto scaler plugin interface definition              |
+| /plugins/linear_regression | plugin.go       | Contains the linear regression plugin implementation              |
+| /plugins/queue_theory      | plugin.go       | Contains the queue theory plugin implementation                   |
+| /plugins/rabbitmq          | plugin.go       | Contains the rabbitmq plugin implementation                       |
+| /plugins/scheduler_prob    | plugin.go       | Contains the scheduler conflict probability plugin implementation |
+| /yaml                      | autoscaler.yaml | Deployment file to deploy the scheduler in a Kubernetes cluster   |
+| /docker                    | Dockerfile      | Used by docker to create a docker image                           |
 
 <br>
 
