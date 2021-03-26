@@ -44,7 +44,19 @@ const (
   DefaultConfigPath = "/go/src/app/config.cfg"
 )
 
-// main code path
+/*
+The main routing of the autoscaler.
+
+The coodinator will first attempt to get configuration variables via the config file.
+If not config file is found the autoscaler will attempt to load configuration variables
+from the Environment variables.
+
+Once the configuration variables are loaded the coordinator will proceed wait for new pods
+to be created. Once a new pod is created the coordiantor will placed the newly created pod
+in a work queue and the handler will process it in a First-in-first-out fashion
+
+
+*/
 func main() {
 
   // Get required values
@@ -116,7 +128,7 @@ func main() {
     }
   }
 
-  // declare the counter as unsigned int
+  // Declare the counter as unsigned int
   var requestsCounter uint64 = 0
 
 	// get the Kubernetes client for communicating with the kubernetes API server
@@ -194,7 +206,6 @@ func main() {
           return
         }
 
-        // somewhere in your code
         atomic.AddUint64(&requestsCounter, 1)
         // Add to workqueue
         queue.Add(key)
@@ -227,6 +238,7 @@ func main() {
 /*
 
 Creates a prometheus based metrics server exporting coordinator metrics
+Used by the scheduler probability plugin of the autoscaler
 
 */
 func metricsServer(){

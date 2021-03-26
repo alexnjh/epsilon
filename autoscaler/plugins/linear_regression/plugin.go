@@ -1,3 +1,7 @@
+/*
+// LinearRegressionPlugin makes scaling decisions based on LinearRegression.
+// (NOTE this is not very effective and was use as a demo and should be replaced by a more robust machine learning algorithm)
+*/
 package linear_regression
 
 import(
@@ -7,8 +11,6 @@ import(
   regression "github.com/sajari/regression"
 )
 
-// LinearRegressionPlugin decides based on LinearRegression.
-// (NOTE this is not very effective and was use as a demo and should be replaced by a more robust machine learning algorithm)
 type LinearRegressionPlugin struct{
   Name string
   QueueName string

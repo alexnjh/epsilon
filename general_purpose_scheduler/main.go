@@ -47,7 +47,22 @@ const (
 // Initialize json encoder
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
+/*
 
+The main routing of the scheduler microservice.
+
+The scheduler will first attempt to get configuration variables via the config file.
+If not config file is found the autoscaler will attempt to load configuration variables
+from the Environment variables.
+
+Once the configuration variables are loaded the scheduler will create the scheduler struct
+and initialize the local state by populating the locat state with information fetched from
+the kube-api server
+
+Once all the require variables are created the ScheduleProcess() method will be invoked which
+starts the scheduling lifecycle.
+
+*/
 func main() {
 
   var mqHost, mqPort, mqUser, mqPass, receiveQueue, backoffQueue, hostname string

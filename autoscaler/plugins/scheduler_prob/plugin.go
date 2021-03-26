@@ -1,3 +1,4 @@
+// SchedProbPlugin decides based on the scheduler conflict probability based on current cluster state.
 package scheduler_prob
 
 import(
@@ -5,7 +6,6 @@ import(
   "github.com/alexnjh/epsilon/autoscaler/interfaces"
 )
 
-// SchedProbPlugin decides based on the scheduler conflict probability based on current cluster state.
 type SchedProbPlugin struct{
   Name string
   QueueName string

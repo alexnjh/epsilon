@@ -23,12 +23,15 @@ import (
  "github.com/streadway/amqp"
 )
 
+// CommunicationClient stucture
 type CommunicationClient struct{
+  // The hostname of the queue microservice
   host string
   conn *amqp.Connection
   ch *amqp.Channel
 }
 
+// Create a new communication client for communication with the queue microservice
 func NewCommunicationClient(host string) (CommunicationClient, error){
 
  var comms = CommunicationClient{host,nil,nil}
@@ -41,6 +44,7 @@ func NewCommunicationClient(host string) (CommunicationClient, error){
  return comms,nil
 }
 
+// Create a new queue to either receive or send messages
 func (c *CommunicationClient) QueueDeclare(queue string) error{
 
  _, err := c.ch.QueueDeclare(
@@ -61,7 +65,7 @@ func (c *CommunicationClient) QueueDeclare(queue string) error{
  return nil
 }
 
-// Send schedule request to the schedulers
+// Send messages to a specific queue
 func (c *CommunicationClient) Send(message []byte, queue string) error{
 
  err := c.ch.Publish(
@@ -83,7 +87,7 @@ func (c *CommunicationClient) Send(message []byte, queue string) error{
  return nil
 }
 
-// Send schedule request to the schedulers
+// Receive messages from a specific queue
 func (c *CommunicationClient) Receive(queue string) (<-chan amqp.Delivery, error){
 
   msgs, err := c.ch.Consume(
@@ -106,6 +110,7 @@ if err != nil{
 return msgs,nil
 }
 
+// Attempt to connect to the queue microservice
 func (c *CommunicationClient) Connect() error{
 
  if c.conn != nil{

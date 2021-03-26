@@ -37,7 +37,18 @@ import (
   communication "github.com/alexnjh/epsilon/communication"
 )
 
-// Does scheduling operations and should be executed in a goroutine
+/*
+
+The schedule process consist of the following steps:
+
+1. Check for new pods assigned by the coordinator by monitoring the queue
+2. Once a new pod is received, get details of the pod from the local state
+3. Send pod for scheduling by running the Schedule() method of the scheduler struct
+4. Once the Scheduler() function returns check if the NorminatedPod is nil
+5. If NorminatedPod is nil proceed to bind the pod to the node if not execute preemption process
+6. Repeat step 1
+
+*/
 func ScheduleProcess(
   comm communication.Communication,
   s *sched.Scheduler,
@@ -145,7 +156,16 @@ func ScheduleProcess(
 }
 
 
-// Does preemption operations and should be executed in a goroutine
+/*
+
+The preemption process consist of the following steps:
+
+1. Inform the other scehduler services of the preeemption by updating the node details
+2. Once update is complete, delete the victim pod from the node
+3. Once the pod is deleted, proceed to deploy the preemptor pod
+4. Once preemptor is deployed, inform the other scheduler services the preemption had completed
+
+*/
 func PreemptionProcess(
   client kubernetes.Interface,
   suggestedHost string,

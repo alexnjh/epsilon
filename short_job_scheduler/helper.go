@@ -19,7 +19,7 @@ import (
   communication "github.com/alexnjh/epsilon/communication"
 )
 
-
+// Get microservice config file
 func getConfig(path string) (*configparser.ConfigParser, error){
   p, err := configparser.NewConfigParserFromFile(path)
   if err != nil {
@@ -60,6 +60,7 @@ func getKubernetesClient() (kubernetes.Interface){
 	return client
 }
 
+// Send a message to a queue
 func SendToQueue(comm communication.Communication, message []byte, queue string){
   for {
     if err := comm.Send(message,queue); err != nil {
@@ -108,7 +109,7 @@ func AddPodEvent(
   },metav1.CreateOptions{})
 }
 
-
+// Add current scheduling status to the kube-api-server
 func AddPodStatus(
   client kubernetes.Interface,
   pod *corev1.Pod,
@@ -129,6 +130,7 @@ func AddPodStatus(
 
 }
 
+// Bind the pod to the node
 func bind(client kubernetes.Interface, p corev1.Pod, NodeName string, discoverTime time.Duration, schedTime time.Time) error{
 
   if p.Annotations != nil {

@@ -9,7 +9,6 @@ import (
   "context"
   "k8s.io/client-go/kubernetes"
   "k8s.io/client-go/util/retry"
-  // "k8s.io/sample-controller/pkg/signals"
   "k8s.io/apimachinery/pkg/labels"
   rabbithole "github.com/michaelklishin/rabbit-hole/v2"
   kubeinformers "k8s.io/client-go/informers"
@@ -27,10 +26,25 @@ import (
 )
 
 const (
+  // Default microservice configuration file
   DefaultConfigPath = "/go/src/app/config.cfg"
 )
 
+/*
 
+The main routing of the autoscaler.
+
+The autoscaler will first attempt to get configuration variables via the config file.
+If not config file is found the autoscaler will attempt to load configuration variables
+from the Environment variables.
+
+Once the configuration variables are loaded the autoscaler will start intitalizing the
+different plugins. Once the plugins are initilize the autoscaler will gather cluster
+metrics and call the different plugins and wait for the plugins to return a decision.
+
+Once a decision is made the autoscaler weill proceed to execute the decision. This process
+will continue after a certain interval that is specified by the user.
+*/
 func main() {
 
   // Get required values
@@ -117,6 +131,7 @@ func main() {
     fmt.Sprintf(defaultQueue): true,
   }
 
+  // Create informers to be inform of updates to the cluster state
   kubeClient := getKubernetesClient()
   kubeInformerFactory := kubeinformers.NewSharedInformerFactory(kubeClient, time.Second*30)
   nodeInformer := kubeInformerFactory.Core().V1().Nodes().Informer()
@@ -128,6 +143,7 @@ func main() {
 	stopCh := make(chan struct{})
 	defer close(stopCh)
 
+  // Start the informers
   kubeInformerFactory.Start(stopCh)
 
   log.Infof("Waiting for cache to be populated")
@@ -138,6 +154,8 @@ func main() {
     }
   }
 
+
+  // Access the rabbitmq queue microservice to get queue statistics
   rmqc, _ := rabbithole.NewClient(fmt.Sprintf("http://%s:%s",mqHost,mqManagePort), mqUser, mqPass)
 
   res, err := rmqc.Overview()
@@ -150,8 +168,6 @@ func main() {
   log.Infof("---------------------------")
   log.Infof("Management version: %s",res.ManagementVersion)
   log.Infof("Erlang version: %s",res.ErlangVersion)
-
-  // Initialize Plugins
 
   pluginList := make(map[string]interfaces.AutoScalerPlugin)
 
@@ -176,6 +192,8 @@ func main() {
 
   temp := make([]interfaces.ComputeResult,len(pluginList))
 
+
+  // Main process loop
   for {
 
     qs, err := rmqc.ListQueues()

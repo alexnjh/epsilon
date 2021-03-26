@@ -1,3 +1,4 @@
+// Interface and type definations for a autoscaler plugin
 package interfaces
 
 import (
@@ -16,7 +17,7 @@ const (
 	ScaleDown ComputeResult = "ScaleDown"
 )
 
-// Autoscaler plugin used by the autoscaler to decide if scaling is necessary
+// Autoscaler plugin implementation defination
 type AutoScalerPlugin interface{
   Compute(float64,float64,float64) ComputeResult
 }

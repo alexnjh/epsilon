@@ -1,3 +1,4 @@
+// RabbitMQPlugin decides based on current queue utilization value given by the RabbitMQ service.
 package rabbitmq
 
 import(
@@ -6,7 +7,6 @@ import(
   rabbithole "github.com/michaelklishin/rabbit-hole/v2"
 )
 
-// RabbitMQPlugin decides based on current queue utilization value given by the RabbitMQ service.
 type RabbitMQPlugin struct{
   Name string
   Vhost string

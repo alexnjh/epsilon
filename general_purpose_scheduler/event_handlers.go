@@ -24,8 +24,8 @@ import(
   "github.com/alexnjh/epsilon/general_purpose_scheduler/scheduler"
 )
 
-// addAllEventHandlers is a helper function used in tests and in Scheduler
-// to add event handlers for various informers.
+// Add monitors to monitor global state and update local state if needed
+// There are two types of monitors, one monitor pods and another one monitor nodes
 func addAllEventHandlers(
   sched *scheduler.Scheduler,
   informerFactory informers.SharedInformerFactory,
@@ -34,6 +34,8 @@ func addAllEventHandlers(
   ){
 
     nodeInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+
+      // A new node is added
       AddFunc: func(obj interface{}) {
 
         node := obj.(*corev1.Node)
@@ -44,8 +46,8 @@ func addAllEventHandlers(
         }
 
       },
+      // One of the nodes got updated information
       UpdateFunc: func(oldObj, newObj interface{}) {
-        // Comment this to simulate what happens if a scheduler fails to notice the preemptor pod
         oldNode := oldObj.(*corev1.Node)
         newNode := newObj.(*corev1.Node)
 
@@ -55,6 +57,7 @@ func addAllEventHandlers(
           fmt.Println("Fail to update node to cache", err)
         }
       },
+      // A node is deleted
       DeleteFunc: func(obj interface{}) {
         node := obj.(*corev1.Node)
         err := sched.SchedulerCache.RemoveNode(node)
@@ -67,6 +70,7 @@ func addAllEventHandlers(
     })
 
     podInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
+      // A new pod is added
       AddFunc: func(obj interface{}) {
 
 
@@ -78,6 +82,7 @@ func addAllEventHandlers(
           fmt.Println("Fail to add pod to cache", err)
         }
       },
+      // One of the pods got updated information
       UpdateFunc: func(oldObj, newObj interface{}) {
 
         oldPod := oldObj.(*corev1.Pod)
@@ -90,6 +95,7 @@ func addAllEventHandlers(
         }
 
       },
+      // A pod is deleted
       DeleteFunc: func(obj interface{}) {
         pod := obj.(*corev1.Pod)
         err := sched.SchedulerCache.RemovePod(pod)

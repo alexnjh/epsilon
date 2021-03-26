@@ -36,7 +36,7 @@ import (
   communication "github.com/alexnjh/epsilon/communication"
 )
 
-// Handler interface contains the methods that are required
+// Handler interface contains the methods that are required to handle pods
 type Handler interface {
 	Init() error
 	ObjectSync(key string) error
@@ -45,7 +45,9 @@ type Handler interface {
 
 // PodHandler is a implementation of Handler
 type PodHandler struct{
+  // Name of the default queue
   defaultQueue string
+  // Name of the hostname of the experiment microservice (Only used during experiments)
   hostname  string
   clientset kubernetes.Interface
   lister  corelisters.PodLister
@@ -112,24 +114,22 @@ func (t *PodHandler) ObjectSync(key string) error {
     }
   }
 
-  for {
-    if t.sendExperimentPayload(obj, timeStamp, time.Now(), "epsilon.experiment", t.hostname) == false {
-
-      for{
-        err = t.comm.Connect()
-        if err == nil{
-          break
-        }
-        // Sleep for a random time before trying again
-        time.Sleep(time.Duration(rand.Intn(10))*time.Second)
-      }
-    }else{
-      break
-    }
-  }
-
-  // // Increase pod count by 1
-  // t.metricCounter.Inc()
+  // Uncomment this if experiment service is up
+  // for {
+  //   if t.sendExperimentPayload(obj, timeStamp, time.Now(), "epsilon.experiment", t.hostname) == false {
+  //
+  //     for{
+  //       err = t.comm.Connect()
+  //       if err == nil{
+  //         break
+  //       }
+  //       // Sleep for a random time before trying again
+  //       time.Sleep(time.Duration(rand.Intn(10))*time.Second)
+  //     }
+  //   }else{
+  //     break
+  //   }
+  // }
 
   return nil
 
@@ -154,6 +154,7 @@ func (t *PodHandler) sendScheduleRequest(key string, timestamp time.Time, queueN
   return true
 }
 
+// Send pod processing details to the experiment microservice (Only for experiments)
 func (t *PodHandler) sendExperimentPayload(pod *corev1.Pod, in time.Time, out time.Time, queueName string, hostname string) bool{
 
   respBytes, err := json.Marshal(communication.ExperimentPayload{Type:"Coordinator",InTime:in,OutTime:out,Pod:pod,Hostname: hostname})

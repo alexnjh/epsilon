@@ -1,3 +1,4 @@
+// QueueTheoryPlugin decides based on approximation of the waiting time for all the pods current in the cluster wiating to be scheduled.
 package queue_theory
 
 import(
@@ -12,7 +13,6 @@ import(
   log "github.com/sirupsen/logrus"
 )
 
-// QueueTheoryPlugin decides based on approximation of the waiting time for all the pods current in the cluster wiating to be scheduled.
 type QueueTheoryPlugin struct{
   Name string
   Threshold float64

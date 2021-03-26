@@ -39,6 +39,19 @@ const (
 // Initialize json encoder
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
+/*
+
+The main routing of the retry microservice.
+
+The retry service will first attempt to get configuration variables via the config file.
+If not config file is found the autoscaler will attempt to load configuration variables
+from the Environment variables.
+
+Once the configuration variables are loaded the retry service will wait for pods that
+failed scheduling and if a pod arrrives the retry service will wait for a backoff period
+before sending the pod to rescheduling.
+
+*/
 func main() {
 
   // Get required values
