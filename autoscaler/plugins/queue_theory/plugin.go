@@ -1,7 +1,7 @@
-package queuetheory
+package queue_theory
 
 import(
-  
+
 )
 
 // QueueTheoryPlugin decides based on approximation of the waiting time for all the pods current in the cluster wiating to be scheduled.

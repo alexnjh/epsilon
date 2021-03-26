@@ -23,7 +23,10 @@ import (
   log "github.com/sirupsen/logrus"
   applisters "k8s.io/client-go/listers/apps/v1"
   configparser "github.com/bigkevmcd/go-configparser"
-
+  rabbitplugin "github.com/alexnjh/autoscaler/plugins/rabbitmq"
+  queueplugin "github.com/alexnjh/autoscaler/plugins/queue_theory"
+  linearplugin "github.com/alexnjh/autoscaler/plugins/linear_regression"
+  schedplugin "github.com/alexnjh/autoscaler/plugins/scheduler_prob"
 )
 
 const (
@@ -165,10 +168,10 @@ func main() {
     if queue.Name == defaultQueue{
 
       // Initialize Plugins
-      pluginList["rabbitmq"]=NewRabbitMQPlugin("rabbitmq",queue.Vhost,queue.Name,0.5,rmqc)
-      pluginList["schedprob"]=NewSchedProbPlugin("schedprob",queue.Name,0.5)
-      pluginList["reggression"]=NewLinearRegressionPlugin("reggression",queue.Name,5)
-      pluginList["queuetheory"]=NewQueueTheoryPlugin("queuetheory",0.5,fmt.Sprintf("http://%s",pcURL))
+      pluginList["rabbitmq"]=rabbitplugin.NewRabbitMQPlugin("rabbitmq",queue.Vhost,queue.Name,0.5,rmqc)
+      pluginList["schedprob"]=schedplugin.NewSchedProbPlugin("schedprob",queue.Name,0.5)
+      pluginList["reggression"]=linearplugin.NewLinearRegressionPlugin("reggression",queue.Name,5)
+      pluginList["queuetheory"]=queueplugin.NewQueueTheoryPlugin("queuetheory",0.5,fmt.Sprintf("http://%s",pcURL))
 
       break
     }
