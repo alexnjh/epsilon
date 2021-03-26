@@ -7,7 +7,7 @@ metadata:
     app: sched-scheduler-unit
     epsilon.queue: epsilon.distributed
 spec:
-  replicas: 10
+  replicas: 3
   selector:
     matchLabels:
       app: sched-scheduler-unit
@@ -22,7 +22,6 @@ spec:
       containers:
       - name: sched-scheduler-unit
         image: alexnjh/epsilon_scheduler_service:0.0.2
-        imagePullPolicy: Always
         env:
         - name: MQ_HOST
           value: "sched-rabbitmq-0.sched-rabbitmq.custom-scheduler.svc.cluster.local"

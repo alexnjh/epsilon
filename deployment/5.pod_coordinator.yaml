@@ -35,7 +35,6 @@ spec:
       containers:
       - name: sched-pod-coordinator
         image: alexnjh/epsilon_pod_coordinator:0.0.2
-        imagePullPolicy: Always
         env:
         - name: MQ_HOST
           value: "sched-rabbitmq-0.sched-rabbitmq.custom-scheduler.svc.cluster.local"

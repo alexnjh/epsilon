@@ -19,7 +19,6 @@ spec:
       containers:
       - name: sched-autoscaler
         image: alexnjh/epsilon_autoscaler_service:0.0.2
-        imagePullPolicy: Always
         env:
         - name: PC_METRIC_URL
           value: "pod-coordinator.custom-scheduler.svc.cluster.local:8080/metrics"
