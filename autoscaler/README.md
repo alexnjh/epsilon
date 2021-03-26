@@ -7,7 +7,7 @@
 - [Contents](#contents)
   - [Description](#desc)
   - [Deployment](#deploy)
-  - [How does the coordinator work?](#algo)
+  - [How does the autoscaler work?](#algo)
   - [Directory and File description](#dir)
   - [Common questions](#qna)
 
@@ -49,8 +49,8 @@ Before deploying the coordinator.yaml file, please configure the environment var
       - name: POD_NAMESPACE
 
 <br>
-
 The **DEFAULT_QUEUE** is the queue used by the general-purpose scheduler. In Epsilon, atleast one scheduler service need to act as the default scheduler.
+<br>
 The **PC_METRIC_URL** is the hostname of the coodinator service (This can be ignored if the QueueTheory plugin is not enabled)
 
 ---
