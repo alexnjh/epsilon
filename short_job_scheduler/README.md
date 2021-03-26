@@ -27,7 +27,7 @@ The short job scheduler is a lightweight scheduler designed to schedule pods ver
 <br>
 
 <a name="deploy"/></a> 
-### :grey_exclamation: Deployment of the short job microservice
+### :grey_exclamation: Deployment of the Short Job Scheduler microservice
 
 Before deploying the scheduler.yaml file, please configure the environment variables to the correct values used by the queue microservice.
 
