@@ -46,6 +46,7 @@ Before deploying the scheduler.yaml file, please configure the environment varia
       value: "epsilon.backoff"
 
 **RECEIVE_QUEUE** indicates the queue the scheduler is going to be listening to for new pods send by the coordinator service.
+<br>
 **RETRY_QUEUE** indicates the queue the scheduler is going to send failed pods to.
 
 <br>
