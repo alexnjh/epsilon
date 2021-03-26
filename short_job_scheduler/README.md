@@ -50,9 +50,9 @@ Before deploying the scheduler.yaml file, please configure the environment varia
             fieldPath: metadata.name
 
 <br>
-RECEIVE_QUEUE indicates the queue the scheduler is going to be listening to for new pods send by the coordinator service.
+<b>RECEIVE_QUEUE<b> indicates the queue the scheduler is going to be listening to for new pods send by the coordinator service.
 <br>
-RETRY_QUEUE indicates the queue the scheduler is going to send failed pods to.
+<b>RETRY_QUEUE<b> indicates the queue the scheduler is going to send failed pods to.
 
 ---
 
