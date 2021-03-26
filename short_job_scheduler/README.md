@@ -17,7 +17,7 @@
 <a name="desc"/></a> 
 ### :grey_exclamation: Description
 
-The autoscaler's goal is to scale scheduler replicas depending on cluster load to ensure performance is up to user requirement.
+The short job scheduler is a lightweight scheduler designed to schedule pods very quickly and is used for demonstration purposes and also a template for creating different scheduler microservices. 
 
 <br>
 
@@ -27,31 +27,32 @@ The autoscaler's goal is to scale scheduler replicas depending on cluster load t
 <br>
 
 <a name="deploy"/></a> 
-### :grey_exclamation: Deployment of the autoscaler service
+### :grey_exclamation: Deployment of the short job microservice
 
-Before deploying the coordinator.yaml file, please configure the environment variables to the correct values used by the queue microservice.
+Before deploying the scheduler.yaml file, please configure the environment variables to the correct values used by the queue microservice.
 
       env:
-      - name: PC_METRIC_URL
-        value: "pod-coordinator.custom-scheduler.svc.cluster.local:8080/metrics"
       - name: MQ_HOST
         value: "sched-rabbitmq-0.sched-rabbitmq.custom-scheduler.svc.cluster.local"
-      - name: MQ_MANAGE_PORT
-        value: "15672"
+      - name: MQ_PORT
+        value: "5672"
       - name: MQ_USER
         value: "guest"
       - name: MQ_PASS
         value: "guest"
-      - name: INTERVAL
-        value: "300"
-      - name: DEFAULT_QUEUE
-        value: "epsilon.distributed"
-      - name: POD_NAMESPACE
+      - name: RECEIVE_QUEUE
+        value: "epsilon.shortjob"
+      - name: RETRY_QUEUE
+        value: "epsilon.backoff"
+      - name: HOSTNAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
 
 <br>
-The **DEFAULT_QUEUE** is the queue used by the general-purpose scheduler. In Epsilon, atleast one scheduler service need to act as the default scheduler.
+RECEIVE_QUEUE indicates the queue the scheduler is going to be listening to for new pods send by the coordinator service.
 <br>
-The **PC_METRIC_URL** is the hostname of the coodinator service (This can be ignored if the QueueTheory plugin is not enabled)
+RETRY_QUEUE indicates the queue the scheduler is going to send failed pods to.
 
 ---
 
